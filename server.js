@@ -96,15 +96,24 @@ app.post('/api/webhook', (req, res) => {
   // Exact field names can shift between API versions, so double check against
   // current Recall.ai docs when wiring this up and adjust the mapping below.
   const speakerName = event?.data?.data?.participant?.name || event?.speaker || 'Unknown';
-  const text = event?.data?.data?.words?.map(w => w.text).join(' ') || event?.transcript || '';
+  const words = event?.data?.data?.words || [];
+  const text = words.map(w => w.text).join(' ') || event?.transcript || '';
   const isFinal = event?.data?.data?.is_final ?? true;
+
+  // Best-effort: forward per-word confidence if Recall.ai's payload includes it (used for
+  // pronunciation/clarity scoring downstream). Field name may need adjusting once you see
+  // a real webhook payload — check current Recall.ai docs if this comes through empty.
+  const wordConfidences = words
+    .filter(w => typeof w.confidence === 'number')
+    .map(w => ({ word: w.text, confidence: w.confidence }));
 
   if (text && text.trim()) {
     broadcastToClients({
       type: 'transcript',
       speakerName,
       text,
-      isFinal
+      isFinal,
+      words: wordConfidences
     });
   }
 

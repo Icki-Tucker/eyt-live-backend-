@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EYT Berlitz Assessor — Operating Guide</title>
+<style>
+  :root{
+    --navy:#1347D0; --navy-deep:#0A2580; --ink:#1C2541; --paper:#F7F9FD;
+    --line:#DDE3EE; --amber:#F3B313; --amber-deep:#946600; --slate:#62729A;
+    --success:#157A4C; --card:#FFFFFF;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: "SF Mono", ui-monospace, "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;line-height:1.6;}
+  a{color:var(--navy);}
+  .skip{position:absolute;left:-9999px;}
+  .skip:focus{left:8px;top:8px;background:var(--navy);color:#fff;padding:6px 10px;border-radius:6px;z-index:100;}
+
+  /* ── top bar ── */
+  .topbar{background:linear-gradient(135deg,var(--navy-deep),var(--navy));color:#fff;
+    padding:22px 28px;display:flex;align-items:center;gap:14px;}
+  .mark{width:38px;height:38px;border-radius:9px;background:var(--amber);color:var(--navy-deep);
+    font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    font-family:var(--mono);}
+  .topbar h1{font-size:17px;margin:0;font-weight:700;letter-spacing:-0.01em;}
+  .topbar p{margin:2px 0 0;font-size:12.5px;color:rgba(255,255,255,0.72);}
+
+  /* ── shell / sidebar ── */
+  .shell{display:flex;max-width:1180px;margin:0 auto;align-items:flex-start;}
+  nav.toc{position:sticky;top:0;flex:0 0 220px;padding:32px 18px 40px 28px;font-size:13px;}
+  nav.toc .toc-label{font-size:10.5px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;
+    color:var(--slate);margin-bottom:10px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;
+    border-left:2px solid var(--line);}
+  nav.toc a{display:block;color:var(--ink);text-decoration:none;padding:7px 0 7px 14px;
+    border-left:2px solid transparent;margin-left:-2px;opacity:0.75;}
+  nav.toc a:hover{opacity:1;border-left-color:var(--navy);}
+  nav.toc a:focus-visible{outline:2px solid var(--navy);outline-offset:2px;}
+  @media (max-width:820px){ .shell{flex-direction:column;} nav.toc{position:static;flex:none;width:100%;padding:20px 20px 0;} }
+
+  main{flex:1;min-width:0;padding:32px 28px 80px;max-width:760px;}
+
+  h2{font-size:22px;letter-spacing:-0.01em;margin:0 0 4px;color:var(--navy-deep);text-wrap:balance;}
+  h2 .eyebrow{display:block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--slate);margin-bottom:6px;}
+  h3{font-size:15px;margin:26px 0 10px;color:var(--ink);}
+  section{margin-bottom:52px;padding-top:8px;}
+  section:first-of-type{padding-top:0;}
+  p{margin:0 0 14px;max-width:64ch;}
+  .lede{color:var(--slate);font-size:14.5px;max-width:60ch;}
+
+  code, .kbd{font-family:var(--mono);font-size:0.92em;background:#EEF1FA;color:var(--navy-deep);
+    padding:1.5px 6px;border-radius:4px;white-space:nowrap;}
+
+  ol.steps{list-style:none;margin:0;padding:0;counter-reset:step;}
+  ol.steps > li{counter-increment:step;position:relative;padding:0 0 20px 40px;
+    border-left:2px solid var(--line);margin-left:13px;}
+  ol.steps > li:last-child{border-left-color:transparent;padding-bottom:2px;}
+  ol.steps > li::before{content:counter(step);position:absolute;left:-13px;top:0;
+    width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;
+    font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  ol.steps > li strong{display:block;font-size:14.5px;margin-bottom:3px;}
+  ol.steps > li p{margin:0;font-size:13.5px;color:var(--ink);}
+  ol.steps > li p.detail{color:var(--slate);font-size:13px;margin-top:4px;}
+
+  .callout{border-radius:10px;padding:14px 16px;margin:16px 0;font-size:13.5px;display:flex;gap:11px;}
+  .callout .ic{font-size:16px;line-height:1;flex-shrink:0;margin-top:1px;}
+  .callout.warn{background:#FFF7E0;border:1px solid #F0DDA0;}
+  .callout.warn .ic{color:var(--amber-deep);}
+  .callout.info{background:#EEF3FE;border:1px solid #CBDAF9;}
+  .callout.info .ic{color:var(--navy);}
+  .callout p{margin:0;max-width:none;}
+  .callout strong{color:var(--navy-deep);}
+
+  .path-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0 8px;}
+  @media (max-width:680px){.path-grid{grid-template-columns:1fr;}}
+  .path-card{border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--card);}
+  .path-card .tag{font-size:10.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--navy);margin-bottom:6px;}
+  .path-card h4{margin:0 0 6px;font-size:15px;}
+  .path-card p{font-size:13px;color:var(--slate);margin:0;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;}
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:14px 0;}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;}
+  th{background:#F0F3FB;color:var(--slate);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;
+    font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 8px;
+    border-radius:100px;}
+  .pill.ai{background:#E4EEFE;color:#1347D0;}
+  .pill.iv{background:#FFF3CC;color:#9A6C00;}
+
+  .btn-ref{font-family:var(--mono);font-size:12.5px;background:var(--ink);color:#fff;
+    padding:3px 9px;border-radius:6px;display:inline-block;}
+
+  hr.div{border:none;border-top:1px solid var(--line);margin:44px 0;}
+
+  footer{padding:26px 28px 60px;color:var(--slate);font-size:12px;max-width:760px;}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#setup">Skip to content</a>
+
+<div class="topbar">
+  <div class="mark">EYT</div>
+  <div>
+    <h1>Berlitz Assessor — Operating Guide</h1>
+    <p>How to run a candidate assessment, live or from a transcript</p>
+  </div>
+</div>
+
+<div class="shell">
+  <nav class="toc" aria-label="Sections">
+    <div class="toc-label">On this page</div>
+    <ol>
+      <li><a href="#setup">1. One-time setup</a></li>
+      <li><a href="#choose">2. Choose your path</a></li>
+      <li><a href="#upload">3. Transcript Upload</a></li>
+      <li><a href="#live">4. Live Interview Mode</a></li>
+      <li><a href="#batch">5. Batch Tracker</a></li>
+      <li><a href="#limits">6. Known limits</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <section id="setup">
+      <h2><span class="eyebrow">Before you start</span>Save your API key</h2>
+      <p class="lede">Settings only has one key to manage now: <strong>Anthropic</strong>, which powers all four dimension scores (Linguistic Range, Grammatical Accuracy, Fluency, Phonological Control). There's nothing Deepgram-related to paste anymore — Recall.ai runs that on its own end for Live Interview Mode.</p>
+
+      <ol class="steps">
+        <li><strong>Open the <span class="btn-ref">Settings</span> tab.</strong>
+          <p>Paste your Anthropic key into the field under <strong>Anthropic (Scoring)</strong>, then click <span class="btn-ref">Save for Session</span>.</p>
+          <p class="detail">This only lasts for the current browser tab session — reload the page and you'll need to paste it again, unless you use the "Embed Key in File" option below to download a personal copy with it baked in.</p>
+        </li>
+      </ol>
+
+      <div class="callout info">
+        <span class="ic">ⓘ</span>
+        <p>The key never leaves your browser except to call Anthropic's API directly — there's no backend involved in scoring itself.</p>
+      </div>
+    </section>
+
+    <section id="choose">
+      <h2><span class="eyebrow">Two ways to score</span>Pick the right mode</h2>
+      <div class="path-grid">
+        <div class="path-card">
+          <div class="tag">No live audio</div>
+          <h4>Transcript Upload</h4>
+          <p>You already have a written transcript. AI scores Linguistic Range and Grammar from the text; Fluency and Pronunciation need your ear, so they're marked <code>N/A</code> for the AI and left to you.</p>
+        </div>
+        <div class="path-card">
+          <div class="tag">Real-time, via Google Meet</div>
+          <h4>Live Interview Mode</h4>
+          <p>A bot joins your actual Google Meet call and scores all four dimensions as the interview happens, including pronunciation — no manual audio review needed afterward.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="upload">
+      <h2><span class="eyebrow">Mode 1</span>Transcript Upload</h2>
+      <ol class="steps">
+        <li><strong>Fill in candidate details and paste or upload the transcript.</strong>
+          <p>Name, role, department, and assessor name, plus the transcript text itself.</p>
+        </li>
+        <li><strong>Click Assess.</strong>
+          <p>The AI returns Linguistic Range and Grammar scores with evidence quoted from the transcript.</p>
+        </li>
+        <li><strong>Add your own scores for all four dimensions.</strong>
+          <p>Every row now shows an <span class="pill ai">AI</span> score next to an <span class="pill iv">Interviewer</span> dropdown — including Linguistic Range and Grammar, if you want to weigh in on top of the AI. Fluency and Pronunciation are yours to judge; the AI has no audio to work from here.</p>
+        </li>
+        <li><strong>Click Update Suitability once Fluency and Pronunciation are scored.</strong>
+          <p>Regenerates the final write-up using all four dimensions instead of just the two AI ones.</p>
+          <p class="detail">Whichever score you enter as Interviewer takes priority over the AI's for the final qualifying level — the AI score is only the fallback if you leave a dimension blank.</p>
+        </li>
+        <li><strong>Download the PDF, or add the candidate to Batch Tracker.</strong></li>
+      </ol>
+    </section>
+
+    <section id="live">
+      <h2><span class="eyebrow">Mode 2</span>Live Interview Mode</h2>
+      <p class="lede">This sends a real bot into your Google Meet call — it'll show up to the candidate and interviewer as a participant named <strong>EYT Assessor</strong>.</p>
+
+      <div class="callout warn">
+        <span class="ic">⚠</span>
+        <p><strong>Tell the candidate first.</strong> A bot visibly joining and recording the call may need disclosure or consent depending on where the candidate is located. Check with whoever handles compliance before rolling this out widely.</p>
+      </div>
+
+      <ol class="steps">
+        <li><strong>Fill in Candidate Information.</strong>
+          <p>Candidate name, role, department, assessor name.</p>
+        </li>
+        <li><strong>Paste the Google Meet link</strong> into the field under Recording.</li>
+        <li><strong>Click Start Interview.</strong>
+          <p>The bot is sent into the call — this takes a few seconds. Status updates appear above the transcript panel while it connects.</p>
+          <p class="detail">If the backend has been idle a while, the very first request can take 30–60 seconds to wake up (free-tier cold start) — this is expected, not a failure.</p>
+        </li>
+        <li><strong>Let the interview run.</strong>
+          <p>The transcript fills in below the scoring panel as people speak. Linguistic Range, Grammar, and Fluency update roughly every 90 seconds; Pronunciation is scored once, at the end, from the call's word-confidence data.</p>
+        </li>
+        <li><strong>Check that speaker tagging is right.</strong>
+          <p>Candidate vs. Interviewer is detected automatically from the Meet participant names. If it's backward, click <span class="btn-ref">🔄 Swap</span> — this corrects the entire transcript and every score computed so far, not just what's said from that point on.</p>
+        </li>
+        <li><strong>Click Stop &amp; Score when the interview ends.</strong>
+          <p>The bot leaves the call and final scores are generated for all four dimensions.</p>
+          <p class="detail">Needs at least 30 words of candidate speech captured — if the interview was too short, you'll be told to run a longer one instead of getting a score.</p>
+        </li>
+        <li><strong>Review the Qualifying Level and add your own scores.</strong>
+          <p>Same as Transcript Upload — every dimension shows both an <span class="pill ai">AI</span> pill and an <span class="pill iv">Interviewer</span> dropdown, including Pronunciation and Fluency, which the AI has already scored here (unlike Transcript Upload).</p>
+        </li>
+        <li><strong>Click Update Suitability, then download the PDF or add to Batch Tracker.</strong></li>
+      </ol>
+
+      <h3>While it's running</h3>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Control</th><th>What it does</th></tr>
+          <tr><td><span class="btn-ref">⬇ Download</span></td><td>Saves the transcript so far as a plain text file.</td></tr>
+          <tr><td><span class="btn-ref">Clear</span></td><td>Wipes the on-screen transcript. Doesn't stop the bot or affect scoring.</td></tr>
+          <tr><td><span class="btn-ref">🔄 Swap</span></td><td>Flips Candidate ↔ Interviewer everywhere it's been tagged so far.</td></tr>
+          <tr><td><span class="btn-ref">↺ New Interview</span></td><td>Resets everything for the next candidate. Stops the bot first if it's still running.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="batch">
+      <h2><span class="eyebrow">Tracking multiple candidates</span>Batch Tracker</h2>
+      <p>Every candidate you add (from either mode) lands here in one table — AI and Interviewer score per dimension, qualifying level, and the suitability write-up.</p>
+      <ol class="steps">
+        <li><strong>Download Batch (.xlsx)</strong> for the full spreadsheet.
+          <p>One summary sheet with everyone, plus a detail sheet per candidate with the full AI and Interviewer notes for all four dimensions.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="limits">
+      <h2><span class="eyebrow">Worth knowing</span>Known limits</h2>
+
+      <div class="callout warn">
+        <span class="ic">⚠</span>
+        <p><strong>Not yet tested against a real call.</strong> The backend's mapping of Recall.ai's data — who's speaking, and the word-confidence numbers behind the Pronunciation score — is a best-effort guess at the payload shape. Run one real test interview before trusting this for an actual candidate, and flag it if speaker names or Pronunciation evidence look off.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="ic">⚠</span>
+        <p><strong>Billing is shared.</strong> Every Live Interview across every assessor draws from the same Recall.ai account and API key. Keep an eye on usage once more than one person is running interviews.</p>
+      </div>
+
+      <div class="callout info">
+        <span class="ic">ⓘ</span>
+        <p>The backend's free tier spins down when idle. For a real interview where timing matters, consider the paid tier (~$7/mo) so Start Interview doesn't stall on a cold start.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  EYT Berlitz Assessor — internal operating guide. Reflects the tool as currently built; update this if the Live Interview flow changes.
+</footer>
+
+</body>
+</html>
