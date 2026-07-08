@@ -45,11 +45,21 @@ app.post('/api/start-bot', async (req, res) => {
       body: JSON.stringify({
         meeting_url: meetingUrl,
         bot_name: 'EYT Assessor',
-        transcription_options: {
-          provider: 'deepgram' // Recall.ai runs Deepgram on its side, with diarization
-        },
-        real_time_transcription: {
-          destination_url: `${PUBLIC_BACKEND_URL}/api/webhook`
+        recording_config: {
+          transcript: {
+            provider: {
+              deepgram_streaming: {
+                language_code: 'en'
+              }
+            }
+          },
+          realtime_endpoints: [
+            {
+              type: 'webhook',
+              url: `${PUBLIC_BACKEND_URL}/api/webhook`,
+              events: ['transcript.data']
+            }
+          ]
         }
       })
     });
@@ -92,17 +102,17 @@ app.post('/api/stop-bot', async (req, res) => {
 app.post('/api/webhook', (req, res) => {
   const event = req.body;
 
-  // Recall.ai's real-time transcript payload includes the speaker and text.
-  // Exact field names can shift between API versions, so double check against
-  // current Recall.ai docs when wiring this up and adjust the mapping below.
+  // Verified against Recall.ai's current transcript.data event schema (docs.recall.ai/docs/real-time-transcription).
   const speakerName = event?.data?.data?.participant?.name || event?.speaker || 'Unknown';
   const words = event?.data?.data?.words || [];
   const text = words.map(w => w.text).join(' ') || event?.transcript || '';
+  // transcript.data events are always final utterances — no is_final field is sent, so this just confirms that.
   const isFinal = event?.data?.data?.is_final ?? true;
 
-  // Best-effort: forward per-word confidence if Recall.ai's payload includes it (used for
-  // pronunciation/clarity scoring downstream). Field name may need adjusting once you see
-  // a real webhook payload — check current Recall.ai docs if this comes through empty.
+  // NOTE: transcript.data does not include per-word confidence — Recall.ai only exposes that via a
+  // separate transcript.provider_data event with a different payload shape. This will currently always
+  // come through empty (PC scoring falls back to "No word-level data available"), unless we later
+  // subscribe to that additional event type and parse its raw Deepgram payload.
   const wordConfidences = words
     .filter(w => typeof w.confidence === 'number')
     .map(w => ({ word: w.text, confidence: w.confidence }));
