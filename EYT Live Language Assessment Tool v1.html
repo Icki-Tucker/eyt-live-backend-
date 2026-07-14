@@ -2557,10 +2557,7 @@ async function liveRunFinalScore() {
       const n=document.getElementById('live-notes-FL'); if(n){n.textContent=flNotes;n.className='ldim-notes';}
       liveFLLevel=flLevel; liveFLNotes=flNotes;
     }
-    livePCLevel = pcResult.aiLevel||'';
-    livePCNotes = pcResult.aiNotes||'';
-    const pAiPC=document.getElementById('live-ai-pill-PC');
-    if (livePCLevel) { pAiPC.textContent=livePCLevel; pAiPC.className='doc-level-pill level-'+livePCLevel; }
+    livePCNotes = pcResult.pc_observation||'';
     if (livePCNotes) {
       const obsCard=document.getElementById('live-pc-obs-card'); if(obsCard) obsCard.style.display='block';
       const obsText=document.getElementById('live-pc-observation'); if(obsText) obsText.textContent=livePCNotes;
@@ -2570,7 +2567,7 @@ async function liveRunFinalScore() {
       LR:{aiLevel:liveLRLevel,aiNotes:liveLRNotes,interviewerLevel:'',interviewerNotes:''},
       GA:{aiLevel:liveGALevel,aiNotes:liveGANotes,interviewerLevel:'',interviewerNotes:''},
       FL:{aiLevel:flLevel,aiNotes:flNotes,interviewerLevel:'',interviewerNotes:''},
-      PC:{aiLevel:livePCLevel,aiNotes:livePCNotes,interviewerLevel:'',interviewerNotes:''},
+      PC:{aiLevel:'',aiNotes:livePCNotes,interviewerLevel:'',interviewerNotes:''},
       partial_suitability:mainResult.partial_suitability||'', recommended_action:mainResult.recommended_action||'',
       assessor_notes:mainResult.assessor_notes||'',
       candidateName:cn, role:cr, department:cd, assessor:ca,
@@ -2597,17 +2594,17 @@ function buildPCEvidence(wordData) {
   return 'Total words: '+total+'\nAvg confidence: '+avg+'%\nBelow 80%: '+low.length+' ('+Math.round(low.length/total*100)+'%)\nBelow 60%: '+vlow.length+'\nMost flagged: '+(wordList||'none');
 }
 
-// PC scoring must separate "hard to understand" (a real clarity issue) from "accented but
-// clear" (not a deficiency) so a real accent doesn't get scored down just for sounding
-// non-native. Default to the higher CEFR level whenever the evidence is ambiguous.
+// PC is never AI-scored. Confidence data is usually absent in Live Interview Mode, and a level
+// guessed from transcript text alone would judge accent instead of clarity. The AI only writes
+// an observation for the human to weigh after listening to the actual audio.
 function buildPCSysPrompt() {
-  return `You are an EYT assessor scoring Phonological Control (PC) for a Filipino candidate for a neutral-accent customer-facing role. Use Deepgram word confidence data (low confidence may mean unclear pronunciation, fast speech, or heavy accent — but can also be false positives for Filipino-accented speech on US-trained models). Focus on patterns, not isolated words.
+  return `You are an EYT assessor assistant preparing a Phonological Control (PC) observation for a human assessor, for a Filipino candidate applying to a neutral-accent customer-facing role. You are NOT assigning a level, only writing supporting notes. Use Deepgram word confidence data when it is present (low confidence may mean unclear pronunciation, fast speech, or heavy accent — but can also be a false positive for Filipino-accented speech on US-trained models). If no word confidence data is available, say so explicitly and base the note on transcript text only, being clear that text alone cannot confirm real clarity issues versus transcription artefacts or fast connected speech.
 
-CRITICAL — accent bias: a candidate can be strongly accented and still fully intelligible. Only score down for words/sounds that would genuinely confuse a listener or require repetition, never for sounding non-native. Explicitly distinguish "hard to understand" (a real clarity issue, scoring-relevant) from "accented but clear" (not a deficiency). If the evidence is ambiguous between two levels, assign the HIGHER level — accent alone must never pull the score down.
+CRITICAL — accent bias: a candidate can be strongly accented and still fully intelligible. Distinguish "hard to understand" (a real clarity issue) from "accented but clear" (not a deficiency) wherever the evidence gives a basis to. Never imply or suggest a level.
 
-CEFR levels: A2=individual sounds and word stress are inconsistent enough that the listener has to concentrate, repetition needed fairly often; B1=understandable in routine exchanges, but unfamiliar words or faster speech introduce issues that sometimes require clarification; B2=clear enough that the listener rarely needs to ask for repetition, some first-language influence remains but doesn't slow comprehension; C1=consistently clear regardless of topic or speaking speed, intonation used naturally to signal meaning.
+Write 3-5 sentences covering: the confidence pattern if available, specific sounds/words repeatedly flagged if available, whether anything noted suggests a real clarity issue or is more likely a transcription artefact, and what the assessor should specifically listen for in the audio.
 
-Return ONLY valid JSON: {"aiLevel":"B1|B2|C1|C2","aiNotes":"3-5 sentences: overall confidence pattern, specific sounds/words repeatedly flagged, whether it suggests real clarity issues or transcription artefacts, and what the assessor should listen for."}`;
+Return ONLY valid JSON: {"pc_observation":"your note here"}`;
 }
 
 function buildLiveSysPrompt(isFinal, prevContext) {
