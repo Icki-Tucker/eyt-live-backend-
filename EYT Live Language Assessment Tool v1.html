@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EYT Berlitz Assessor</title>
+<title>EYT Language Assessor</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -643,7 +643,7 @@
     <div class="logo-icon">EYT</div>
     <div>
       <div class="logo-name">EXTEND YOUR TEAM</div>
-      <div class="logo-sub">Berlitz Assessor Tool</div>
+      <div class="logo-sub">Language Assessor Tool</div>
     </div>
   </div>
   <div class="header-tabs">
@@ -743,7 +743,7 @@
             <div class="doc-logo-mark">EYT</div>
             <div>
               <div class="doc-org">EXTEND YOUR TEAM</div>
-              <div class="doc-title">Berlitz English Proficiency Assessment</div>
+              <div class="doc-title">EYT English Proficiency Assessment</div>
             </div>
           </div>
           <div class="doc-qual-block" id="doc-qual-block">
@@ -956,7 +956,7 @@
 
         <!-- Doc footer -->
         <div class="doc-footer">
-          <span>EYT Communication Coach Training Program · Berlitz Assessment · Assessor Use Only</span>
+          <span>EYT Communication Coach Training Program · Proficiency Assessment · Assessor Use Only</span>
           <span id="sc-meta">—</span>
         </div>
 
@@ -1201,7 +1201,7 @@
     <div class="card">
       <div class="card-title" style="margin-bottom:14px;">How Qualifying Level Works</div>
       <div style="font-size:13px;color:var(--body-text);line-height:1.7;">
-        The qualifying Berlitz level is the <strong>lowest</strong> dimension score across all four categories — not an average. A candidate who scores C1 on three dimensions but B1 on Grammatical Accuracy qualifies at B1.<br><br>
+        The qualifying level is the <strong>lowest</strong> dimension score across all four categories — not an average. A candidate who scores C1 on three dimensions but B1 on Grammatical Accuracy qualifies at B1.<br><br>
         <strong>B1</strong> — Internal support; limited external communication<br>
         <strong>B2</strong> — Customer-facing, team lead, account coordinator, HR generalist<br>
         <strong>C1</strong> — Senior client-facing, manager, trainer, quality analyst<br>
@@ -1213,8 +1213,7 @@
       <div class="card-title">About This Tool</div>
       <div style="font-size:13px;color:var(--grey-text);line-height:1.7;">
         Built for the EYT Communication Coach Training Program.<br>
-        Powered by Claude (claude-sonnet-4-6) via the Anthropic API.<br>
-        Scoring is grounded in the EYT Grammar Refresher, Linguistic Range, and Phonological Control assessor training documents.
+        Powered by Claude (claude-sonnet-4-6) via the Anthropic API.
       </div>
     </div>
 
@@ -1253,7 +1252,7 @@ function embedApiKey() {
     const blob = new Blob([html], {type:'text/html'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href=url; a.download='EYT_Berlitz_Assessor_WithKeys.html';
+    a.href=url; a.download='EYT_Language_Assessor_WithKeys.html';
     document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
     status.textContent = 'Downloaded ✓'; status.style.color = 'var(--navy)';
     showToast('File with embedded keys downloaded ✓');
@@ -1420,58 +1419,41 @@ async function runAssessment() {
   const candDept   = document.getElementById('candDept').value.trim()    || 'N/A';
   const assessor   = document.getElementById('assessorName').value.trim()|| 'Assessor';
 
-  const systemPrompt = `You are a strict but fair EYT Berlitz language assessor. Your scores must be grounded in evidence from the transcript only. When in doubt between two levels, assign the LOWER level. Overscoring is more serious than underscoring.
+  const systemPrompt = `You are a strict but fair EYT language assessor. Your scores must be grounded in evidence from the transcript only. When in doubt between two levels, assign the LOWER level. Overscoring is more serious than underscoring.
 
 You will assess TWO dimensions: Linguistic Range (LR) and Grammatical Accuracy (GA).
 
 LINGUISTIC RANGE (LR) - EYT Scoring Guide
 ==========================================
-LR measures vocabulary, sentence complexity, register, and idiomatic/abstract language. It is NOT Fluency. Speed does not affect LR.
+LR measures the breadth and precision of vocabulary and sentence variety available to the candidate, separate from whether what they say is grammatically correct. It is NOT Fluency. Speed does not affect LR.
 
 DOMAIN VOCABULARY WARNING: Job-specific terms (SQL, Python, Tableau, stakeholders, BI, predictive modeling, escalate, onboard) are memorised labels, NOT broad LR evidence. A B1 speaker can name their tools. B2 LR requires varied professional vocabulary ACROSS topics, not just one specialty.
 
-B1 LR - these patterns dominate:
-- Vocabulary: everyday words only (good, bad, hard, nice, things, stuff); relies on "very" and "a lot"; vague nouns; repeats same words without synonyms; cannot paraphrase
-- Complexity: ideas strung with "and then... and then..."; no subordination; rarely uses because, although, unless, while; ideas listed not connected
-- Register: one register only - either too casual or robotic; no adjustment to context
-- Idioms/Abstract: none present; describes events only; no principles drawn from events
+A2 LR: Relies on a small set of everyday words and repeats the same simple phrasing. When a needed word isn't known, the candidate often stalls, switches topic, or gives up on the idea rather than working around it.
 
-B2 LR - most of these are present:
-- Vocabulary: varied professional vocabulary across topics (approach, escalate, collaborate, coordinate, implement); uses synonyms; can paraphrase; avoids repetition
-- Complexity: uses compound AND some complex sentences; uses because, although, however, therefore naturally; qualifies ideas (mostly, generally, in that case); ideas connect across sentences
-- Register: professional tone; adjusts for context; can use instructional and narrative register
-- Idioms/Abstract: occasional idioms used correctly; can generalise and give opinions with reasons
+B1 LR: Vocabulary covers familiar and routine topics adequately but thins out quickly outside them. Sentences tend to follow the same handful of patterns. When a word is missing, the candidate can sometimes describe around it, but clumsily.
 
-C1 LR - consistent pattern of all:
-- Abstract vocabulary: nominalisation (the decision, the outcome); hedging (to some extent, broadly speaking)
-- Complex subordination is natural: conditionals, relative clauses, meta-commentary
-- Smooth register shifts; evaluates events, draws principles, does not just describe
+B2 LR: Vocabulary is broad enough to discuss work-related and moderately abstract topics without obvious gaps. Sentence variety is noticeable, not just simple statements strung together. Can substitute a different word or phrase smoothly when the first choice doesn't come.
 
-Score B1 if: vocabulary is restricted to one domain + everyday words elsewhere; structure is almost entirely "and then" with no subordination; no paraphrase ability evident.
-Score B2 if: professional vocabulary appears across multiple areas; some subordination and qualification present; ideas connected not just listed. NOTE: Filler words ("technically", "basically") repeated frequently are a Fluency concern, NOT an LR disqualifier on their own.
+C1 LR: Chooses precise, sometimes specialized vocabulary rather than settling for a generic word. Varies sentence structure naturally depending on what's being expressed. Works around an unfamiliar word so smoothly it barely registers as a gap.
+
+Score B1 if: vocabulary covers routine topics adequately but thins out fast outside them; sentences repeat the same handful of patterns; can describe around a missing word, but clumsily.
+Score B2 if: vocabulary is broad enough for work-related and moderately abstract topics without obvious gaps; sentence variety is noticeable; substitutes words smoothly when needed. NOTE: Filler words ("technically", "basically") repeated frequently are a Fluency concern, NOT an LR disqualifier on their own.
 
 GRAMMATICAL ACCURACY (GA) - EYT Scoring Guide
 ===============================================
-GA measures tense accuracy, subject-verb agreement, and sentence structure.
+GA measures whether the candidate builds sentences correctly, including tense, agreement, and structure, without needing the listener to guess at the intended meaning.
 
-B1 GA - errors present but meaning clear:
-- Tense: mixes past and present in same narrative without justification (MOST DIAGNOSTIC B1 signal); omits auxiliaries; uses simple past instead of present perfect
-- Agreement: missing -s/-es on third-person singular; team/management treated as plural (team are, management have)
-- Structure: mostly simple sentences; occasional fragments or run-ons; limited conjunctions
-- Self-correction: may not notice or correct errors
+A2 GA: Builds short, simple sentences correctly but breaks down as soon as tense, negation, or word order gets more demanding. Errors are frequent enough that the listener sometimes has to work out what was meant.
 
-B2 GA - mostly accurate:
-- Tense: mostly consistent across narrative; self-corrects when errors occur
-- Agreement: consistent on standard structures; may slip on complex constructions but recovers
-- Structure: mix of simple, compound, and some complex sentences; minor errors that do not impede meaning
-- Self-correction: strong B2 signal when present, but its ABSENCE alone does not disqualify B2 if overall accuracy is high
+B1 GA: Handles everyday sentence patterns reliably. Runs into trouble with less common tenses, conditionals, or longer sentences, and errors start appearing when the candidate tries to say something more complicated than the question requires.
 
-C1 GA - errors rare:
-- Complex tenses accurate; agreement consistent in complex structures
-- Varied deliberate structures; subordination shows reasoning; near-flawless
+B2 GA: Constructs accurate sentences across most topics, including some complexity like multi-clause sentences. Occasional slips happen under time pressure or with less familiar structures, but the candidate usually catches and corrects them without help.
 
-Score B1 GA if: tense drift (past/present mixing in a narrative) is consistent and goes unnoticed.
-Score B2 GA if: mostly accurate overall with occasional slips, and structures are varied. Do NOT require zero errors for B2. B2 means "mostly accurate with minor occasional errors."
+C1 GA: Maintains accuracy even in extended, complex responses. Errors are rare and don't interfere with understanding. Uses advanced structures (conditionals, passive voice, embedded clauses) naturally rather than avoiding them.
+
+Score B1 GA if: handles everyday sentence patterns reliably, but trouble appears with less common tenses, conditionals, or longer sentences.
+Score B2 GA if: accurate across most topics including some multi-clause complexity; occasional slips under pressure that the candidate usually self-corrects without help. Do NOT require zero errors for B2.
 
 SUITABILITY
 ===========
@@ -1500,49 +1482,6 @@ ERRORS OBSERVED: Every error by type, exact quoted words from transcript, correc
 EVIDENCE FOR [LEVEL]: Exact quotes from transcript showing what justifies this level.
 WHY NOT [NEXT LEVEL]: Specific features absent that the next level requires.
 
-CALIBRATION EXAMPLES (sourced from EYT BPI documents and official Berlitz Global Oral Assessment Scale)
-========================================================================================================
-These are your scoring anchors. Score every candidate RELATIVE to these reference responses.
-All examples use BPI questions from the EYT Question Bank.
-
----------------------------------------------------------------------
-ANCHOR 1 -- LR: B1 / GA: B1
-BPI Question: "Tell me about a project you completed recently. What was your role?" (BQ2, Phase 1)
----------------------------------------------------------------------
-Candidate response:
-"So last year we have a project for our clients. I am the one who handle the reports and I make sure everything is okay. The project was hard but we finish it on time. My manager was happy and the client was also happy. I think I do a good job because I work hard every day."
-
-LR: B1 -- Vocabulary is entirely generic: 'project', 'hard', 'happy', 'good job', 'work hard'. No domain-specific or varied professional terms. Repeats 'happy' twice. SVO sentences only with no subordination beyond 'because'. Cannot abstract beyond personal narrative.
-Why not B2: No varied professional vocabulary. No compound or complex sentences. B2 requires 'repertoire includes several words to convey a particular idea' -- not present here.
-
-GA: B1 -- Tense drift throughout: "we have a project" (should be "we had"), "I am the one who handle" (missing -s, should be "handles"), "I do a good job" mid-narrative (should be "I did"). Drops auxiliary in "I make sure". No self-correction observed.
-Why not B2: Tense drift is consistent and uncorrected -- hard B1 ceiling per EYT GA Calibration: "When a candidate narrative mixes tenses without reason, that inconsistency is a hard limit at B1."
-
----------------------------------------------------------------------
-ANCHOR 2 -- LR: B2 / GA: B2
-BPI Question: "Could you walk me through the process of how your team handles a client dispute?" (BQ7, Phase 2)
----------------------------------------------------------------------
-Candidate response:
-"Sure. When a dispute comes in, the first thing we do is acknowledge the client's concern and make sure they feel heard before we move into the resolution process. Depending on the nature of the issue -- whether it's a billing error or a service complaint -- we either resolve it directly or escalate it to the relevant department. I usually coordinate with the back-office team to make sure the documentation is complete. Most cases are resolved within 48 hours, but if the issue is more complex, we set realistic expectations upfront so the client isn't left waiting without any communication."
-
-LR: B2 -- Varied professional vocabulary across the response: 'acknowledge', 'resolution process', 'billing error', 'escalate', 'coordinate', 'documentation', 'realistic expectations'. Uses conditional subordination: "Depending on the nature of the issue -- whether it's a billing error or a service complaint". Handles Phase 2 multi-step explanation.
-Why not C1: Word choices are functional but some feel rehearsed or mechanical. No idiomatic expressions. No nominalisation or abstraction. C1 requires precise terminology and seamless circumlocution -- not yet present.
-
-GA: B2 -- Tense consistently maintained throughout a long multi-step narrative. Conditional structure used correctly ("if the issue is more complex, we set"). Accurate across simple and compound forms. No errors that impede meaning.
-Why not C1: No complex subordination beyond basic conditional. No past perfect or present perfect. Slightly formulaic phrasing but no errors.
-
----------------------------------------------------------------------
-SCORING DECISION RULES FROM EYT DOCUMENTS
----------------------------------------------------------------------
-- Tense drift in a narrative = HARD CAP at B1 (EYT GA Calibration, Slide 9)
-- Missing third-person -s (e.g. "She handle all complaints") = B1 GA signal
-- Collective noun with plural verb (e.g. "My team are responsible") = B1 GA signal
-- Generic vocabulary only (good, bad, hard, things, problem) = B1 LR
-- Fluent delivery does NOT mean high LR -- speed does not affect Range score
-- One impressive word in a B1 response is an outlier, not C1 Range
-- B2 LR = "more expansive vocabulary, handles complex topics clearly, some word choices feel mechanical"
-- B2 GA = "uses most basic grammatical forms correctly, self-corrects when errors occur"
-
 TRANSCRIPT PARSING RULES
 =========================
 The transcript may contain both the interviewer and the candidate speaking.
@@ -1554,44 +1493,44 @@ STEP 1 -- IDENTIFY SPEAKERS:
 - If names in the transcript do not exactly match the form fields, use context: the person asking questions is the interviewer; the person answering is the candidate
 - Score ONLY the candidate's lines for LR and GA
 
-STEP 2 -- IDENTIFY BPI PHASE COVERAGE:
-Use the EYT Berlitz Proficiency Interview (BPI) Question Bank below to identify which questions were asked and which phases were reached. Match the interviewer's questions against this list. Exact wording may vary -- match by intent and topic.
+STEP 2 -- IDENTIFY INTERVIEW PHASE COVERAGE:
+Use the EYT Interview Question Guide below to identify which questions were asked and which phases were reached. Match the interviewer's questions against this list. Exact wording may vary -- match by intent and topic.
 
-EYT BPI QUESTION BANK (Assessment Guide -- for all candidate roles, not recruiter-specific)
+EYT INTERVIEW QUESTION GUIDE (Assessment Guide -- for all candidate roles, not recruiter-specific)
 -------------------------------------------------------------------------------------------
-PHASE 1: Narrative & Baseline (Targeting B1/B1+)
+PHASE 1: Narrative & Baseline (Targeting B1)
 Focus: Consistency in high-frequency grammar and basic professional background.
-BQ1: "Can you describe your typical workday at your current job?" -- Fluency / GA (Present Tense)
-BQ2: "Tell me about a project you completed recently. What was your role?" -- GA (Past Tense)
-BQ3: "What kind of skills do you think are necessary to be successful in your field?" -- LR (Professional vocabulary)
-BQ4: "How do you usually spend your time when you aren't working?" -- Fluency (baseline tempo)
-BQ5: "If a new colleague joined your team tomorrow, what advice would you give them?" -- LR / PC (social navigation)
+IQ1: "Walk me through what a normal day looks like for you at work." -- Fluency / GA (Present Tense)
+IQ2: "Tell me about something you finished at work recently. What part did you play in it?" -- GA (Past Tense)
+IQ3: "What abilities do you think someone needs to do well in your line of work?" -- LR (Professional vocabulary)
+IQ4: "What do you like to do outside of work?" -- Fluency (baseline tempo)
+IQ5: "Suppose someone just joined your team. What would you want them to know first?" -- LR / PC (social navigation)
 
 PHASE 2: Technical Detail & Process (Targeting B2)
 Focus: Handling non-routine professional subjects and multi-step explanations.
-BQ6: "What are some significant changes you've seen in your industry over the last five years?" -- GA (Present Perfect / complex structures)
-BQ7: "Could you walk me through the process of how your team handles a client dispute?" -- Fluency / Cohesion (transitions)
-BQ8: "Why do you think some people prefer digital services over face-to-face banking?" -- LR (comparative/contrastive language)
-BQ9: "Describe a time you had to learn a new piece of technology quickly. How did you manage it?" -- Fluency (tempo under pressure)
-BQ10: "How does your company differentiate itself from its main competitors?" -- LR (business-specific verbs)
+IQ6: "How has your industry shifted over the past several years, from what you've seen?" -- GA (Present Perfect / complex structures)
+IQ7: "Take me through the steps your team follows when a customer has a complaint." -- Fluency / Cohesion (transitions)
+IQ8: "Why do you think some customers choose to do things online instead of in person?" -- LR (comparative/contrastive language)
+IQ9: "Tell me about a time you had to pick up a new tool or system fast. How did that go?" -- Fluency (tempo under pressure)
+IQ10: "What sets your company apart from others doing similar work?" -- LR (business-specific verbs)
 
 PHASE 3: Abstraction & Hypotheticals (Targeting C1/C2)
 Focus: Executive register, nuance, and finer shades of meaning.
-BQ11: "If you were the CEO of your company, what is the first major policy you would change and why?" -- GA (Conditionals: If I were... I would)
-BQ12: "To what extent do you think AI will replace human decision-making in finance?" -- LR (nuance and qualifiers)
-BQ13: "Do you agree that 'the customer is always right'? Defend your stance." -- Fluency / LR (spontaneous argumentation)
-BQ14: "How would you explain a complex concept, like home equity, to someone with no background in finance?" -- LR (style and register adjustment)
-BQ15: "In your opinion, what is the relationship between economic stability and social trust?" -- C2 (abstract concept formulation)
+IQ11: "If you were suddenly in charge of the whole company, what's the first big thing you'd change, and why?" -- GA (Conditionals: If I were... I would)
+IQ12: "How much of a role do you think automated tools will end up playing in decisions people currently make?" -- LR (nuance and qualifiers)
+IQ13: "Do you think the saying 'the customer is always right' actually holds up? Make your case either way." -- Fluency / LR (spontaneous argumentation)
+IQ14: "How would you break down a complicated idea from your field to somebody with zero background in it?" -- LR (style and register adjustment)
+IQ15: "Do you think there's a real connection between how financially stable people feel and how much they trust each other? What's your take?" -- C2 (abstract concept formulation)
 
 PHASE 4: Stress Tests & Role-Plays (Targeting PC / composure)
 Focus: Composure, tone, and de-escalation skills.
-BQ16: "I am a frustrated customer who found an error in my billing. Reassure me." -- PC (tone under stress)
-BQ17: "Imagine I suggest a plan you know is flawed. How do you politely disagree?" -- LR (diplomatic language)
-BQ18: "Explain the pros and cons of a fixed-rate versus a variable-rate mortgage." -- GA (comparative structures)
-BQ19: "If your budget was suddenly cut by 20%, how would you re-prioritize?" -- Fluency (pause control vs. filler words)
-BQ20: "What do you hope to achieve professionally in the next ten years?" -- GA (future intentionality)
+IQ16: "Pretend I'm a customer who's upset because I found a mistake on my bill. Put me at ease." -- PC (tone under stress)
+IQ17: "Say I proposed an approach you were pretty sure wouldn't work. How would you push back respectfully?" -- LR (diplomatic language)
+IQ18: "Walk me through the upsides and downsides of a fixed monthly cost versus one that can change over time." -- GA (comparative structures)
+IQ19: "If your resources were cut by a fifth overnight, what would you focus on first?" -- Fluency (pause control vs. filler words)
+IQ20: "Where do you want to be in your career a decade from now?" -- GA (future intentionality)
 
-NOTE: These questions are the EYT standard for all candidate roles. Interviewers may adapt wording for different industries -- match by intent. If the interviewer's question clearly targets the same skill and topic as a BPI question, treat it as that question.
+NOTE: These questions are the EYT standard for all candidate roles. Interviewers may adapt wording for different industries -- match by intent. If the interviewer's question clearly targets the same skill and topic as a listed question, treat it as that question.
 
 STEP 3 -- UNTESTED RANGE FLAGS:
 Before finalising ratings, run these checks:
@@ -1604,9 +1543,9 @@ GA STRUCTURE CHECK:
 If the interview only covered Phase 1 (past narrative only, no hypotheticals, no opinions, no future speculation), append to GA notes:
 "[FLAG] STRUCTURE RANGE UNTESTED -- Interview did not include Phase 2-3 prompts. Candidate was not asked to use conditionals, future tense, or complex argument structures. GA ceiling is untested beyond past narrative. Recommend Phase 2-3 questions to confirm."
 
-BPI PHASE NOTE:
+PHASE COVERAGE NOTE:
 If you can determine which phases were covered, append to assessor_notes:
-"BPI coverage: [Phase X to Phase Y, questions approximately BQN-BQN]. [Any untested ceiling note]."
+"Phase coverage: [Phase X to Phase Y, questions approximately IQN-IQN]. [Any untested ceiling note]."
 If you cannot determine phases from the transcript, omit this note.
 
 IMPORTANT: Do NOT suppress the rating. Always assign a level first, then append any flags.
@@ -1834,7 +1773,7 @@ async function updateSuitability() {
   const gaNotes = effectiveNotes('GA');
   const qualLvl = currentResult.qualifying_level || '—';
 
-  const prompt = `You are an EYT Berlitz language assessor writing the final Suitability and Recommendation for a candidate based on all four assessed dimensions.
+  const prompt = `You are an EYT language assessor writing the final Suitability and Recommendation for a candidate based on all four assessed dimensions.
 
 Candidate: ${currentResult.candidateName}
 Role Applied: ${currentResult.role}
@@ -2001,7 +1940,7 @@ function generatePDF(r) {
   doc.text('EXTEND YOUR TEAM', margin + 21, 10);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
-  doc.text('Berlitz English Proficiency Assessment', margin + 21, 17);
+  doc.text('EYT English Proficiency Assessment', margin + 21, 17);
 
   // Qualifying badge (top right)
   const qualLvl = r.qualifying_level || 'Pending';
@@ -2196,12 +2135,12 @@ function generatePDF(r) {
   doc.setTextColor(180, 190, 220);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.5);
-  doc.text('EYT Communication Coach Training Program  ·  Berlitz Assessment  ·  Assessor Use Only', margin, footerY + 6);
+  doc.text('EYT Communication Coach Training Program  ·  Proficiency Assessment  ·  Assessor Use Only', margin, footerY + 6);
   doc.text(`${r.candidateName}  ·  ${r.date}`, W - margin, footerY + 6, { align: 'right' });
 
   // Save
   const safeName = (r.candidateName || 'Candidate').replace(/\s+/g, '_');
-  doc.save(`Berlitz_${safeName}_${new Date().toISOString().slice(0,10)}.pdf`);
+  doc.save(`EYT_${safeName}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 
 // ── BATCH ──
@@ -2309,7 +2248,7 @@ function downloadBatch() {
     XLSX.utils.book_append_sheet(wb, ws2, name);
   });
 
-  XLSX.writeFile(wb, `EYT_Berlitz_Batch_${new Date().toISOString().slice(0,10)}.xlsx`);
+  XLSX.writeFile(wb, `EYT_Proficiency_Batch_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
 function clearBatch() {
@@ -2662,23 +2601,23 @@ function buildPCEvidence(wordData) {
 // clear" (not a deficiency) so a real accent doesn't get scored down just for sounding
 // non-native. Default to the higher CEFR level whenever the evidence is ambiguous.
 function buildPCSysPrompt() {
-  return `You are an EYT Berlitz assessor scoring Phonological Control (PC) for a Filipino candidate for a neutral-accent customer-facing role. Use Deepgram word confidence data (low confidence may mean unclear pronunciation, fast speech, or heavy accent — but can also be false positives for Filipino-accented speech on US-trained models). Focus on patterns, not isolated words.
+  return `You are an EYT assessor scoring Phonological Control (PC) for a Filipino candidate for a neutral-accent customer-facing role. Use Deepgram word confidence data (low confidence may mean unclear pronunciation, fast speech, or heavy accent — but can also be false positives for Filipino-accented speech on US-trained models). Focus on patterns, not isolated words.
 
 CRITICAL — accent bias: a candidate can be strongly accented and still fully intelligible. Only score down for words/sounds that would genuinely confuse a listener or require repetition, never for sounding non-native. Explicitly distinguish "hard to understand" (a real clarity issue, scoring-relevant) from "accented but clear" (not a deficiency). If the evidence is ambiguous between two levels, assign the HIGHER level — accent alone must never pull the score down.
 
-CEFR levels: B1=frequent unclear words/sounds that would likely require the listener to ask for repetition; B2=occasional unclear words, generally intelligible; C1=rare clarity issues, easily followed; C2=consistently clear regardless of accent.
+CEFR levels: A2=individual sounds and word stress are inconsistent enough that the listener has to concentrate, repetition needed fairly often; B1=understandable in routine exchanges, but unfamiliar words or faster speech introduce issues that sometimes require clarification; B2=clear enough that the listener rarely needs to ask for repetition, some first-language influence remains but doesn't slow comprehension; C1=consistently clear regardless of topic or speaking speed, intonation used naturally to signal meaning.
 
 Return ONLY valid JSON: {"aiLevel":"B1|B2|C1|C2","aiNotes":"3-5 sentences: overall confidence pattern, specific sounds/words repeatedly flagged, whether it suggests real clarity issues or transcription artefacts, and what the assessor should listen for."}`;
 }
 
 function buildLiveSysPrompt(isFinal, prevContext) {
-  return `You are a strict EYT Berlitz assessor scoring a JOB INTERVIEW. Score THREE dimensions: Linguistic Range (LR), Grammatical Accuracy (GA), and Fluency (FL).
+  return `You are a strict EYT assessor scoring a JOB INTERVIEW. Score THREE dimensions: Linguistic Range (LR), Grammatical Accuracy (GA), and Fluency (FL).
 
 TRANSCRIPT: Live speech-to-text, NO automatic punctuation. Never flag missing punctuation as GA error. Judge grammar from word order and agreement only.
 
-LR: Job interviews naturally stay on-topic — do NOT penalise domain focus. B1=generic vocab only; B2=varied professional vocab, complex sentences, qualifiers; C1=nominalisation, hedging, register shifts; C2=near-native precision.
-GA: B1=tense drift (HARD cap), missing -s, aux omission; B2=mostly accurate, self-corrects; C1=complex tenses accurate; C2=no systematic errors.
-FL: Count fillers (um,uh,like,you know) visible in transcript. B1=frequent fillers/long pauses impede flow; B2=some fillers, mostly smooth; C1=rare fillers, planning pauses; C2=native-like.
+LR: Job interviews naturally stay on-topic — do NOT penalise domain focus. B1=vocabulary adequate for routine topics but thins out fast elsewhere, repeats the same sentence patterns; B2=broad vocabulary across work topics with noticeable sentence variety, substitutes smoothly when a word is missing; C1=precise or specialized word choice, natural sentence variety, unfamiliar-word gaps barely register.
+GA: B1=handles everyday patterns reliably but struggles with less common tenses, conditionals, or longer sentences; B2=accurate across most topics including multi-clause complexity, occasional self-corrected slips under pressure; C1=accurate even in extended complex responses, uses advanced structures (conditionals, passive voice, embedded clauses) naturally.
+FL: Count fillers (um,uh,like,you know) visible in transcript. B1=noticeable hesitation, organizes simple ideas but loses coherence in longer responses; B2=natural pace with minor hesitation, ideas organized and easy to follow; C1=smooth and confident, well organized even responding on the spot.
 
 ${isFinal?'COMPLETE interview. Give final assessment.':'MID-INTERVIEW segment. Score conservatively.'}${prevContext}
 
@@ -2748,7 +2687,7 @@ async function liveUpdateSuitability() {
   const pc = pcInterviewerLvl || livePCLevel;
   const pcn = pcInterviewerLvl ? pcInterviewerNotes : livePCNotes;
   const btn=document.getElementById('live-updateSuitBtn'); btn.disabled=true; btn.textContent='Updating…';
-  const sys='You are an EYT Berlitz assessor. Write Final Suitability (2-3 sentences) and Recommended Action (1-2 sentences) based on all four dimensions. B1=internal only;B2=customer-facing;C1=senior;C2=executive. Return ONLY JSON: {"full_suitability":"...","full_recommended_action":"..."}';
+  const sys='You are an EYT assessor. Write Final Suitability (2-3 sentences) and Recommended Action (1-2 sentences) based on all four dimensions. B1=internal only;B2=customer-facing;C1=senior;C2=executive. Return ONLY JSON: {"full_suitability":"...","full_recommended_action":"..."}';
   const up='Candidate: '+liveResult.candidateName+'\nRole: '+liveResult.role+'\nQualifying: '+(liveResult.qualifying_level||'?')+'\nFL ('+liveFLLevel+'): '+liveFLNotes.substring(0,200)+'\nLR ('+liveLRLevel+'): '+liveLRNotes.substring(0,200)+'\nPC ('+pc+'): '+pcn.substring(0,200)+'\nGA ('+liveGALevel+'): '+liveGANotes.substring(0,200);
   try {
     const r=await livCallAPI(key,sys,up,600);
@@ -2827,7 +2766,7 @@ function saveBatch() { /* batch held in memory */ }
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
 &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
-&lt;title&gt;EYT Berlitz Assessor&lt;/title&gt;
+&lt;title&gt;EYT Language Assessor&lt;/title&gt;
 &lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet" /&gt;
 &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"&gt;&lt;/script&gt;
 &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"&gt;&lt;/script&gt;
@@ -3428,7 +3367,7 @@ function saveBatch() { /* batch held in memory */ }
     &lt;div class="logo-icon"&gt;EYT&lt;/div&gt;
     &lt;div&gt;
       &lt;div class="logo-name"&gt;EXTEND YOUR TEAM&lt;/div&gt;
-      &lt;div class="logo-sub"&gt;Berlitz Assessor Tool&lt;/div&gt;
+      &lt;div class="logo-sub"&gt;Language Assessor Tool&lt;/div&gt;
     &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class="header-tabs"&gt;
@@ -3527,7 +3466,7 @@ function saveBatch() { /* batch held in memory */ }
             &lt;div class="doc-logo-mark"&gt;EYT&lt;/div&gt;
             &lt;div&gt;
               &lt;div class="doc-org"&gt;EXTEND YOUR TEAM&lt;/div&gt;
-              &lt;div class="doc-title"&gt;Berlitz English Proficiency Assessment&lt;/div&gt;
+              &lt;div class="doc-title"&gt;EYT English Proficiency Assessment&lt;/div&gt;
             &lt;/div&gt;
           &lt;/div&gt;
           &lt;div class="doc-qual-block" id="doc-qual-block"&gt;
@@ -3740,7 +3679,7 @@ function saveBatch() { /* batch held in memory */ }
 
         &lt;!-- Doc footer --&gt;
         &lt;div class="doc-footer"&gt;
-          &lt;span&gt;EYT Communication Coach Training Program · Berlitz Assessment · Assessor Use Only&lt;/span&gt;
+          &lt;span&gt;EYT Communication Coach Training Program · Proficiency Assessment · Assessor Use Only&lt;/span&gt;
           &lt;span id="sc-meta"&gt;—&lt;/span&gt;
         &lt;/div&gt;
 
@@ -3835,7 +3774,7 @@ function saveBatch() { /* batch held in memory */ }
     &lt;div class="card"&gt;
       &lt;div class="card-title" style="margin-bottom:14px;"&gt;How Qualifying Level Works&lt;/div&gt;
       &lt;div style="font-size:13px;color:var(--body-text);line-height:1.7;"&gt;
-        The qualifying Berlitz level is the &lt;strong&gt;lowest&lt;/strong&gt; dimension score across all four categories — not an average. A candidate who scores C1 on three dimensions but B1 on Grammatical Accuracy qualifies at B1.&lt;br&gt;&lt;br&gt;
+        The qualifying level is the &lt;strong&gt;lowest&lt;/strong&gt; dimension score across all four categories — not an average. A candidate who scores C1 on three dimensions but B1 on Grammatical Accuracy qualifies at B1.&lt;br&gt;&lt;br&gt;
         &lt;strong&gt;B1&lt;/strong&gt; — Internal support; limited external communication&lt;br&gt;
         &lt;strong&gt;B2&lt;/strong&gt; — Customer-facing, team lead, account coordinator, HR generalist&lt;br&gt;
         &lt;strong&gt;C1&lt;/strong&gt; — Senior client-facing, manager, trainer, quality analyst&lt;br&gt;
@@ -3847,8 +3786,7 @@ function saveBatch() { /* batch held in memory */ }
       &lt;div class="card-title"&gt;About This Tool&lt;/div&gt;
       &lt;div style="font-size:13px;color:var(--grey-text);line-height:1.7;"&gt;
         Built for the EYT Communication Coach Training Program.&lt;br&gt;
-        Powered by Claude (claude-sonnet-4-6) via the Anthropic API.&lt;br&gt;
-        Scoring is grounded in the EYT Grammar Refresher, Linguistic Range, and Phonological Control assessor training documents.
+        Powered by Claude (claude-sonnet-4-6) via the Anthropic API.
       &lt;/div&gt;
     &lt;/div&gt;
 
@@ -3870,56 +3808,28 @@ let uploadedText  = '';
 
 // ── EMBED API KEY IN FILE ──
 function embedApiKey() {
-  const v = document.getElementById('apiKeySettings').value.trim();
-  if (!v) { showError('Enter an API key first, then click Embed in File.'); return; }
+  const v  = document.getElementById('apiKeySettings').value.trim();
+  if (!v) { showError('Enter an Anthropic API key first.'); return; }
   if (!v.startsWith('sk-')) { showError('That does not look like a valid Anthropic API key.'); return; }
-
   const status = document.getElementById('embed-status');
-  status.style.display = 'block';
-  status.textContent = 'Preparing file...';
-
+  status.style.display = 'block'; status.textContent = 'Preparing...';
   try {
-    // Read the full HTML source from the hidden textarea
     const sourceEl = document.getElementById('_html_source');
-    if (!sourceEl) {
-      status.textContent = 'Source template not found. Please re-download the base file from the original source.';
-      status.style.color = '#c0392b';
-      return;
-    }
-
+    if (!sourceEl) { status.textContent = 'Source template not found.'; status.style.color = '#c0392b'; return; }
     let html = sourceEl.value;
-
-    // Replace the EMBEDDED_KEY placeholder with the actual key
-    html = html.replace(
-      /const EMBEDDED_KEY = '.*?';/,
-      `const EMBEDDED_KEY = '${v}';`
-    );
-
-    // Also update the source textarea inside the new file so re-embedding works
+    html = html.replace(/const EMBEDDED_KEY = '.*?';/, `const EMBEDDED_KEY = '${v}';`);
     html = html.replace(
       /(&lt;textarea id="_html_source"[^&gt;]*&gt;)([\s\S]*?)(&lt;\/textarea&gt;)/,
-      (match, open, _old, close) =&gt; open + html.replace(/&lt;/g, '&amp;lt;').replace(/&gt;/g, '&amp;gt;') + close
+      (match, open, _old, close) =&gt; open + html.replace(/&lt;/g,'&amp;lt;').replace(/&gt;/g,'&amp;gt;') + close
     );
-
-    const blob = new Blob([html], { type: 'text/html' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = 'EYT_Berlitz_Assessor_WithKey.html';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    status.textContent = 'Downloaded: EYT_Berlitz_Assessor_WithKey.html — share this file with your team.';
-    status.style.color = 'var(--navy)';
-    showToast('File with embedded key downloaded ✓');
-
-  } catch(err) {
-    console.error(err);
-    status.textContent = 'Download failed: ' + err.message;
-    status.style.color = '#c0392b';
-  }
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='EYT_Language_Assessor_WithKeys.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    status.textContent = 'Downloaded ✓'; status.style.color = 'var(--navy)';
+    showToast('File with embedded keys downloaded ✓');
+  } catch(err) { status.textContent = 'Failed: '+err.message; status.style.color='#c0392b'; }
 }
 
 // ── AUTO-LOAD EMBEDDED KEY ON STARTUP ──
@@ -4073,58 +3983,41 @@ async function runAssessment() {
   const candDept   = document.getElementById('candDept').value.trim()    || 'N/A';
   const assessor   = document.getElementById('assessorName').value.trim()|| 'Assessor';
 
-  const systemPrompt = `You are a strict but fair EYT Berlitz language assessor. Your scores must be grounded in evidence from the transcript only. When in doubt between two levels, assign the LOWER level. Overscoring is more serious than underscoring.
+  const systemPrompt = `You are a strict but fair EYT language assessor. Your scores must be grounded in evidence from the transcript only. When in doubt between two levels, assign the LOWER level. Overscoring is more serious than underscoring.
 
 You will assess TWO dimensions: Linguistic Range (LR) and Grammatical Accuracy (GA).
 
 LINGUISTIC RANGE (LR) - EYT Scoring Guide
 ==========================================
-LR measures vocabulary, sentence complexity, register, and idiomatic/abstract language. It is NOT Fluency. Speed does not affect LR.
+LR measures the breadth and precision of vocabulary and sentence variety available to the candidate, separate from whether what they say is grammatically correct. It is NOT Fluency. Speed does not affect LR.
 
 DOMAIN VOCABULARY WARNING: Job-specific terms (SQL, Python, Tableau, stakeholders, BI, predictive modeling, escalate, onboard) are memorised labels, NOT broad LR evidence. A B1 speaker can name their tools. B2 LR requires varied professional vocabulary ACROSS topics, not just one specialty.
 
-B1 LR - these patterns dominate:
-- Vocabulary: everyday words only (good, bad, hard, nice, things, stuff); relies on "very" and "a lot"; vague nouns; repeats same words without synonyms; cannot paraphrase
-- Complexity: ideas strung with "and then... and then..."; no subordination; rarely uses because, although, unless, while; ideas listed not connected
-- Register: one register only - either too casual or robotic; no adjustment to context
-- Idioms/Abstract: none present; describes events only; no principles drawn from events
+A2 LR: Relies on a small set of everyday words and repeats the same simple phrasing. When a needed word isn't known, the candidate often stalls, switches topic, or gives up on the idea rather than working around it.
 
-B2 LR - most of these are present:
-- Vocabulary: varied professional vocabulary across topics (approach, escalate, collaborate, coordinate, implement); uses synonyms; can paraphrase; avoids repetition
-- Complexity: uses compound AND some complex sentences; uses because, although, however, therefore naturally; qualifies ideas (mostly, generally, in that case); ideas connect across sentences
-- Register: professional tone; adjusts for context; can use instructional and narrative register
-- Idioms/Abstract: occasional idioms used correctly; can generalise and give opinions with reasons
+B1 LR: Vocabulary covers familiar and routine topics adequately but thins out quickly outside them. Sentences tend to follow the same handful of patterns. When a word is missing, the candidate can sometimes describe around it, but clumsily.
 
-C1 LR - consistent pattern of all:
-- Abstract vocabulary: nominalisation (the decision, the outcome); hedging (to some extent, broadly speaking)
-- Complex subordination is natural: conditionals, relative clauses, meta-commentary
-- Smooth register shifts; evaluates events, draws principles, does not just describe
+B2 LR: Vocabulary is broad enough to discuss work-related and moderately abstract topics without obvious gaps. Sentence variety is noticeable, not just simple statements strung together. Can substitute a different word or phrase smoothly when the first choice doesn't come.
 
-Score B1 if: vocabulary is restricted to one domain + everyday words elsewhere; structure is almost entirely "and then" with no subordination; no paraphrase ability evident.
-Score B2 if: professional vocabulary appears across multiple areas; some subordination and qualification present; ideas connected not just listed. NOTE: Filler words ("technically", "basically") repeated frequently are a Fluency concern, NOT an LR disqualifier on their own.
+C1 LR: Chooses precise, sometimes specialized vocabulary rather than settling for a generic word. Varies sentence structure naturally depending on what's being expressed. Works around an unfamiliar word so smoothly it barely registers as a gap.
+
+Score B1 if: vocabulary covers routine topics adequately but thins out fast outside them; sentences repeat the same handful of patterns; can describe around a missing word, but clumsily.
+Score B2 if: vocabulary is broad enough for work-related and moderately abstract topics without obvious gaps; sentence variety is noticeable; substitutes words smoothly when needed. NOTE: Filler words ("technically", "basically") repeated frequently are a Fluency concern, NOT an LR disqualifier on their own.
 
 GRAMMATICAL ACCURACY (GA) - EYT Scoring Guide
 ===============================================
-GA measures tense accuracy, subject-verb agreement, and sentence structure.
+GA measures whether the candidate builds sentences correctly, including tense, agreement, and structure, without needing the listener to guess at the intended meaning.
 
-B1 GA - errors present but meaning clear:
-- Tense: mixes past and present in same narrative without justification (MOST DIAGNOSTIC B1 signal); omits auxiliaries; uses simple past instead of present perfect
-- Agreement: missing -s/-es on third-person singular; team/management treated as plural (team are, management have)
-- Structure: mostly simple sentences; occasional fragments or run-ons; limited conjunctions
-- Self-correction: may not notice or correct errors
+A2 GA: Builds short, simple sentences correctly but breaks down as soon as tense, negation, or word order gets more demanding. Errors are frequent enough that the listener sometimes has to work out what was meant.
 
-B2 GA - mostly accurate:
-- Tense: mostly consistent across narrative; self-corrects when errors occur
-- Agreement: consistent on standard structures; may slip on complex constructions but recovers
-- Structure: mix of simple, compound, and some complex sentences; minor errors that do not impede meaning
-- Self-correction: strong B2 signal when present, but its ABSENCE alone does not disqualify B2 if overall accuracy is high
+B1 GA: Handles everyday sentence patterns reliably. Runs into trouble with less common tenses, conditionals, or longer sentences, and errors start appearing when the candidate tries to say something more complicated than the question requires.
 
-C1 GA - errors rare:
-- Complex tenses accurate; agreement consistent in complex structures
-- Varied deliberate structures; subordination shows reasoning; near-flawless
+B2 GA: Constructs accurate sentences across most topics, including some complexity like multi-clause sentences. Occasional slips happen under time pressure or with less familiar structures, but the candidate usually catches and corrects them without help.
 
-Score B1 GA if: tense drift (past/present mixing in a narrative) is consistent and goes unnoticed.
-Score B2 GA if: mostly accurate overall with occasional slips, and structures are varied. Do NOT require zero errors for B2. B2 means "mostly accurate with minor occasional errors."
+C1 GA: Maintains accuracy even in extended, complex responses. Errors are rare and don't interfere with understanding. Uses advanced structures (conditionals, passive voice, embedded clauses) naturally rather than avoiding them.
+
+Score B1 GA if: handles everyday sentence patterns reliably, but trouble appears with less common tenses, conditionals, or longer sentences.
+Score B2 GA if: accurate across most topics including some multi-clause complexity; occasional slips under pressure that the candidate usually self-corrects without help. Do NOT require zero errors for B2.
 
 SUITABILITY
 ===========
@@ -4153,49 +4046,6 @@ ERRORS OBSERVED: Every error by type, exact quoted words from transcript, correc
 EVIDENCE FOR [LEVEL]: Exact quotes from transcript showing what justifies this level.
 WHY NOT [NEXT LEVEL]: Specific features absent that the next level requires.
 
-CALIBRATION EXAMPLES (sourced from EYT BPI documents and official Berlitz Global Oral Assessment Scale)
-========================================================================================================
-These are your scoring anchors. Score every candidate RELATIVE to these reference responses.
-All examples use BPI questions from the EYT Question Bank.
-
----------------------------------------------------------------------
-ANCHOR 1 -- LR: B1 / GA: B1
-BPI Question: "Tell me about a project you completed recently. What was your role?" (BQ2, Phase 1)
----------------------------------------------------------------------
-Candidate response:
-"So last year we have a project for our clients. I am the one who handle the reports and I make sure everything is okay. The project was hard but we finish it on time. My manager was happy and the client was also happy. I think I do a good job because I work hard every day."
-
-LR: B1 -- Vocabulary is entirely generic: 'project', 'hard', 'happy', 'good job', 'work hard'. No domain-specific or varied professional terms. Repeats 'happy' twice. SVO sentences only with no subordination beyond 'because'. Cannot abstract beyond personal narrative.
-Why not B2: No varied professional vocabulary. No compound or complex sentences. B2 requires 'repertoire includes several words to convey a particular idea' -- not present here.
-
-GA: B1 -- Tense drift throughout: "we have a project" (should be "we had"), "I am the one who handle" (missing -s, should be "handles"), "I do a good job" mid-narrative (should be "I did"). Drops auxiliary in "I make sure". No self-correction observed.
-Why not B2: Tense drift is consistent and uncorrected -- hard B1 ceiling per EYT GA Calibration: "When a candidate narrative mixes tenses without reason, that inconsistency is a hard limit at B1."
-
----------------------------------------------------------------------
-ANCHOR 2 -- LR: B2 / GA: B2
-BPI Question: "Could you walk me through the process of how your team handles a client dispute?" (BQ7, Phase 2)
----------------------------------------------------------------------
-Candidate response:
-"Sure. When a dispute comes in, the first thing we do is acknowledge the client's concern and make sure they feel heard before we move into the resolution process. Depending on the nature of the issue -- whether it's a billing error or a service complaint -- we either resolve it directly or escalate it to the relevant department. I usually coordinate with the back-office team to make sure the documentation is complete. Most cases are resolved within 48 hours, but if the issue is more complex, we set realistic expectations upfront so the client isn't left waiting without any communication."
-
-LR: B2 -- Varied professional vocabulary across the response: 'acknowledge', 'resolution process', 'billing error', 'escalate', 'coordinate', 'documentation', 'realistic expectations'. Uses conditional subordination: "Depending on the nature of the issue -- whether it's a billing error or a service complaint". Handles Phase 2 multi-step explanation.
-Why not C1: Word choices are functional but some feel rehearsed or mechanical. No idiomatic expressions. No nominalisation or abstraction. C1 requires precise terminology and seamless circumlocution -- not yet present.
-
-GA: B2 -- Tense consistently maintained throughout a long multi-step narrative. Conditional structure used correctly ("if the issue is more complex, we set"). Accurate across simple and compound forms. No errors that impede meaning.
-Why not C1: No complex subordination beyond basic conditional. No past perfect or present perfect. Slightly formulaic phrasing but no errors.
-
----------------------------------------------------------------------
-SCORING DECISION RULES FROM EYT DOCUMENTS
----------------------------------------------------------------------
-- Tense drift in a narrative = HARD CAP at B1 (EYT GA Calibration, Slide 9)
-- Missing third-person -s (e.g. "She handle all complaints") = B1 GA signal
-- Collective noun with plural verb (e.g. "My team are responsible") = B1 GA signal
-- Generic vocabulary only (good, bad, hard, things, problem) = B1 LR
-- Fluent delivery does NOT mean high LR -- speed does not affect Range score
-- One impressive word in a B1 response is an outlier, not C1 Range
-- B2 LR = "more expansive vocabulary, handles complex topics clearly, some word choices feel mechanical"
-- B2 GA = "uses most basic grammatical forms correctly, self-corrects when errors occur"
-
 TRANSCRIPT PARSING RULES
 =========================
 The transcript may contain both the interviewer and the candidate speaking.
@@ -4207,44 +4057,44 @@ STEP 1 -- IDENTIFY SPEAKERS:
 - If names in the transcript do not exactly match the form fields, use context: the person asking questions is the interviewer; the person answering is the candidate
 - Score ONLY the candidate's lines for LR and GA
 
-STEP 2 -- IDENTIFY BPI PHASE COVERAGE:
-Use the EYT Berlitz Proficiency Interview (BPI) Question Bank below to identify which questions were asked and which phases were reached. Match the interviewer's questions against this list. Exact wording may vary -- match by intent and topic.
+STEP 2 -- IDENTIFY INTERVIEW PHASE COVERAGE:
+Use the EYT Interview Question Guide below to identify which questions were asked and which phases were reached. Match the interviewer's questions against this list. Exact wording may vary -- match by intent and topic.
 
-EYT BPI QUESTION BANK (Assessment Guide -- for all candidate roles, not recruiter-specific)
+EYT INTERVIEW QUESTION GUIDE (Assessment Guide -- for all candidate roles, not recruiter-specific)
 -------------------------------------------------------------------------------------------
-PHASE 1: Narrative &amp; Baseline (Targeting B1/B1+)
+PHASE 1: Narrative &amp; Baseline (Targeting B1)
 Focus: Consistency in high-frequency grammar and basic professional background.
-BQ1: "Can you describe your typical workday at your current job?" -- Fluency / GA (Present Tense)
-BQ2: "Tell me about a project you completed recently. What was your role?" -- GA (Past Tense)
-BQ3: "What kind of skills do you think are necessary to be successful in your field?" -- LR (Professional vocabulary)
-BQ4: "How do you usually spend your time when you aren't working?" -- Fluency (baseline tempo)
-BQ5: "If a new colleague joined your team tomorrow, what advice would you give them?" -- LR / PC (social navigation)
+IQ1: "Walk me through what a normal day looks like for you at work." -- Fluency / GA (Present Tense)
+IQ2: "Tell me about something you finished at work recently. What part did you play in it?" -- GA (Past Tense)
+IQ3: "What abilities do you think someone needs to do well in your line of work?" -- LR (Professional vocabulary)
+IQ4: "What do you like to do outside of work?" -- Fluency (baseline tempo)
+IQ5: "Suppose someone just joined your team. What would you want them to know first?" -- LR / PC (social navigation)
 
 PHASE 2: Technical Detail &amp; Process (Targeting B2)
 Focus: Handling non-routine professional subjects and multi-step explanations.
-BQ6: "What are some significant changes you've seen in your industry over the last five years?" -- GA (Present Perfect / complex structures)
-BQ7: "Could you walk me through the process of how your team handles a client dispute?" -- Fluency / Cohesion (transitions)
-BQ8: "Why do you think some people prefer digital services over face-to-face banking?" -- LR (comparative/contrastive language)
-BQ9: "Describe a time you had to learn a new piece of technology quickly. How did you manage it?" -- Fluency (tempo under pressure)
-BQ10: "How does your company differentiate itself from its main competitors?" -- LR (business-specific verbs)
+IQ6: "How has your industry shifted over the past several years, from what you've seen?" -- GA (Present Perfect / complex structures)
+IQ7: "Take me through the steps your team follows when a customer has a complaint." -- Fluency / Cohesion (transitions)
+IQ8: "Why do you think some customers choose to do things online instead of in person?" -- LR (comparative/contrastive language)
+IQ9: "Tell me about a time you had to pick up a new tool or system fast. How did that go?" -- Fluency (tempo under pressure)
+IQ10: "What sets your company apart from others doing similar work?" -- LR (business-specific verbs)
 
 PHASE 3: Abstraction &amp; Hypotheticals (Targeting C1/C2)
 Focus: Executive register, nuance, and finer shades of meaning.
-BQ11: "If you were the CEO of your company, what is the first major policy you would change and why?" -- GA (Conditionals: If I were... I would)
-BQ12: "To what extent do you think AI will replace human decision-making in finance?" -- LR (nuance and qualifiers)
-BQ13: "Do you agree that 'the customer is always right'? Defend your stance." -- Fluency / LR (spontaneous argumentation)
-BQ14: "How would you explain a complex concept, like home equity, to someone with no background in finance?" -- LR (style and register adjustment)
-BQ15: "In your opinion, what is the relationship between economic stability and social trust?" -- C2 (abstract concept formulation)
+IQ11: "If you were suddenly in charge of the whole company, what's the first big thing you'd change, and why?" -- GA (Conditionals: If I were... I would)
+IQ12: "How much of a role do you think automated tools will end up playing in decisions people currently make?" -- LR (nuance and qualifiers)
+IQ13: "Do you think the saying 'the customer is always right' actually holds up? Make your case either way." -- Fluency / LR (spontaneous argumentation)
+IQ14: "How would you break down a complicated idea from your field to somebody with zero background in it?" -- LR (style and register adjustment)
+IQ15: "Do you think there's a real connection between how financially stable people feel and how much they trust each other? What's your take?" -- C2 (abstract concept formulation)
 
 PHASE 4: Stress Tests &amp; Role-Plays (Targeting PC / composure)
 Focus: Composure, tone, and de-escalation skills.
-BQ16: "I am a frustrated customer who found an error in my billing. Reassure me." -- PC (tone under stress)
-BQ17: "Imagine I suggest a plan you know is flawed. How do you politely disagree?" -- LR (diplomatic language)
-BQ18: "Explain the pros and cons of a fixed-rate versus a variable-rate mortgage." -- GA (comparative structures)
-BQ19: "If your budget was suddenly cut by 20%, how would you re-prioritize?" -- Fluency (pause control vs. filler words)
-BQ20: "What do you hope to achieve professionally in the next ten years?" -- GA (future intentionality)
+IQ16: "Pretend I'm a customer who's upset because I found a mistake on my bill. Put me at ease." -- PC (tone under stress)
+IQ17: "Say I proposed an approach you were pretty sure wouldn't work. How would you push back respectfully?" -- LR (diplomatic language)
+IQ18: "Walk me through the upsides and downsides of a fixed monthly cost versus one that can change over time." -- GA (comparative structures)
+IQ19: "If your resources were cut by a fifth overnight, what would you focus on first?" -- Fluency (pause control vs. filler words)
+IQ20: "Where do you want to be in your career a decade from now?" -- GA (future intentionality)
 
-NOTE: These questions are the EYT standard for all candidate roles. Interviewers may adapt wording for different industries -- match by intent. If the interviewer's question clearly targets the same skill and topic as a BPI question, treat it as that question.
+NOTE: These questions are the EYT standard for all candidate roles. Interviewers may adapt wording for different industries -- match by intent. If the interviewer's question clearly targets the same skill and topic as a listed question, treat it as that question.
 
 STEP 3 -- UNTESTED RANGE FLAGS:
 Before finalising ratings, run these checks:
@@ -4257,9 +4107,9 @@ GA STRUCTURE CHECK:
 If the interview only covered Phase 1 (past narrative only, no hypotheticals, no opinions, no future speculation), append to GA notes:
 "[FLAG] STRUCTURE RANGE UNTESTED -- Interview did not include Phase 2-3 prompts. Candidate was not asked to use conditionals, future tense, or complex argument structures. GA ceiling is untested beyond past narrative. Recommend Phase 2-3 questions to confirm."
 
-BPI PHASE NOTE:
+PHASE COVERAGE NOTE:
 If you can determine which phases were covered, append to assessor_notes:
-"BPI coverage: [Phase X to Phase Y, questions approximately BQN-BQN]. [Any untested ceiling note]."
+"Phase coverage: [Phase X to Phase Y, questions approximately IQN-IQN]. [Any untested ceiling note]."
 If you cannot determine phases from the transcript, omit this note.
 
 IMPORTANT: Do NOT suppress the rating. Always assign a level first, then append any flags.
@@ -4487,7 +4337,7 @@ async function updateSuitability() {
   const gaNotes = effectiveNotes('GA');
   const qualLvl = currentResult.qualifying_level || '—';
 
-  const prompt = `You are an EYT Berlitz language assessor writing the final Suitability and Recommendation for a candidate based on all four assessed dimensions.
+  const prompt = `You are an EYT language assessor writing the final Suitability and Recommendation for a candidate based on all four assessed dimensions.
 
 Candidate: ${currentResult.candidateName}
 Role Applied: ${currentResult.role}
@@ -4654,7 +4504,7 @@ function generatePDF(r) {
   doc.text('EXTEND YOUR TEAM', margin + 21, 10);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
-  doc.text('Berlitz English Proficiency Assessment', margin + 21, 17);
+  doc.text('EYT English Proficiency Assessment', margin + 21, 17);
 
   // Qualifying badge (top right)
   const qualLvl = r.qualifying_level || 'Pending';
@@ -4849,12 +4699,12 @@ function generatePDF(r) {
   doc.setTextColor(180, 190, 220);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.5);
-  doc.text('EYT Communication Coach Training Program  ·  Berlitz Assessment  ·  Assessor Use Only', margin, footerY + 6);
+  doc.text('EYT Communication Coach Training Program  ·  Proficiency Assessment  ·  Assessor Use Only', margin, footerY + 6);
   doc.text(`${r.candidateName}  ·  ${r.date}`, W - margin, footerY + 6, { align: 'right' });
 
   // Save
   const safeName = (r.candidateName || 'Candidate').replace(/\s+/g, '_');
-  doc.save(`Berlitz_${safeName}_${new Date().toISOString().slice(0,10)}.pdf`);
+  doc.save(`EYT_${safeName}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 
 // ── BATCH ──
@@ -4962,7 +4812,7 @@ function downloadBatch() {
     XLSX.utils.book_append_sheet(wb, ws2, name);
   });
 
-  XLSX.writeFile(wb, `EYT_Berlitz_Batch_${new Date().toISOString().slice(0,10)}.xlsx`);
+  XLSX.writeFile(wb, `EYT_Proficiency_Batch_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
 function clearBatch() {
