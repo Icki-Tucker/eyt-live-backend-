@@ -57,7 +57,7 @@ app.post('/api/start-bot', async (req, res) => {
             {
               type: 'webhook',
               url: `${PUBLIC_BACKEND_URL}/api/webhook`,
-              events: ['transcript.data']
+              events: ['transcript.data', 'transcript.provider_data']
             }
           ]
         }
@@ -101,6 +101,11 @@ app.post('/api/stop-bot', async (req, res) => {
 // ── Recall.ai sends transcript events here in real time ──
 app.post('/api/webhook', (req, res) => {
   const event = req.body;
+
+  if (event?.event === 'transcript.provider_data') {
+    console.log('RAW transcript.provider_data payload:', JSON.stringify(event, null, 2));
+    return res.sendStatus(200);
+  }
 
   // Verified against Recall.ai's current transcript.data event schema (docs.recall.ai/docs/real-time-transcription).
   const speakerName = event?.data?.data?.participant?.name || event?.speaker || 'Unknown';
