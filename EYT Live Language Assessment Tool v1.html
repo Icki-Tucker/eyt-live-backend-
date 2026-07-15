@@ -2411,6 +2411,13 @@ async function liveStart() {
       document.getElementById('live-score-refresh').textContent = payload.message;
       return;
     }
+    if (payload.type === 'confidence') {
+      const cTag = resolveSpeakerTag(payload.speakerName || 'Unknown');
+      if (Array.isArray(payload.words)) {
+        payload.words.forEach(w => dgWordData.push({ word: w.word, confidence: w.confidence, speaker: cTag }));
+      }
+      return;
+    }
     if (payload.type !== 'transcript') return;
 
     const speakerTag = resolveSpeakerTag(payload.speakerName || 'Unknown');

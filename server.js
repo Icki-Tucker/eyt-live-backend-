@@ -28,6 +28,8 @@ if (!PUBLIC_BACKEND_URL) {
 // In-memory state. This tool runs one interview at a time, so we don't need a database.
 let activeBotId = null;
 let connectedClients = []; // frontend WebSocket connections listening for live updates
+let recentUtterances = []; // recent transcript.data utterances: {speakerName, text, timestamp} — used to match provider_data to a speaker
+let requestIdSpeaker = {}; // Deepgram request_id -> speakerName, learned once per call then reused
 
 // ── Start a bot for a given Meet link ──
 app.post('/api/start-bot', async (req, res) => {
@@ -103,38 +105,63 @@ app.post('/api/webhook', (req, res) => {
   const event = req.body;
 
   if (event?.event === 'transcript.provider_data') {
-    console.log('RAW transcript.provider_data payload:', JSON.stringify(event, null, 2));
+    handleProviderData(event);
     return res.sendStatus(200);
   }
 
   // Verified against Recall.ai's current transcript.data event schema (docs.recall.ai/docs/real-time-transcription).
   const speakerName = event?.data?.data?.participant?.name || event?.speaker || 'Unknown';
-  console.log('transcript.data speakerName received:', speakerName, '| raw participant field:', JSON.stringify(event?.data?.data?.participant));
   const words = event?.data?.data?.words || [];
   const text = words.map(w => w.text).join(' ') || event?.transcript || '';
   // transcript.data events are always final utterances — no is_final field is sent, so this just confirms that.
   const isFinal = event?.data?.data?.is_final ?? true;
 
-  // NOTE: transcript.data does not include per-word confidence — Recall.ai only exposes that via a
-  // separate transcript.provider_data event with a different payload shape. This will currently always
-  // come through empty (PC scoring falls back to "No word-level data available"), unless we later
-  // subscribe to that additional event type and parse its raw Deepgram payload.
-  const wordConfidences = words
-    .filter(w => typeof w.confidence === 'number')
-    .map(w => ({ word: w.text, confidence: w.confidence }));
-
   if (text && text.trim()) {
-    broadcastToClients({
-      type: 'transcript',
-      speakerName,
-      text,
-      isFinal,
-      words: wordConfidences
-    });
+    recentUtterances.push({ speakerName, text, timestamp: Date.now() });
+    recentUtterances = recentUtterances.filter(u => Date.now() - u.timestamp < 30000).slice(-20);
+
+    // Real per-word confidence never arrives on this event — it comes separately via
+    // transcript.provider_data, see handleProviderData() below.
+    broadcastToClients({ type: 'transcript', speakerName, text, isFinal, words: [] });
   }
 
   res.sendStatus(200);
 });
+
+// transcript.provider_data carries Deepgram's raw response, including per-word confidence, but never a
+// speaker name. Deepgram's own request_id stays the same for one speaker's whole stream, so once we've
+// matched a request_id to a speaker by comparing its text against a recent transcript.data utterance, we
+// can trust that request_id for the rest of the call without matching text again.
+function handleProviderData(event) {
+  const inner = event?.data?.data?.data?.payload;
+  if (inner?.type !== 'Results') return; // skip Metadata and other non-transcript messages
+
+  const alt = inner?.channel?.alternatives?.[0];
+  const words = alt?.words || [];
+  const text = (alt?.transcript || '').trim();
+  if (!words.length || !text) return;
+
+  const requestId = inner?.metadata?.request_id;
+  let speakerName = requestId && requestIdSpeaker[requestId];
+
+  if (!speakerName) {
+    const normalize = s => s.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+    const fragment = normalize(text);
+    const match = [...recentUtterances].reverse().find(u => normalize(u.text).includes(fragment));
+    if (match) {
+      speakerName = match.speakerName;
+      if (requestId) requestIdSpeaker[requestId] = speakerName;
+    }
+  }
+
+  if (!speakerName) return; // can't attribute this one yet — skip rather than guess wrong
+
+  broadcastToClients({
+    type: 'confidence',
+    speakerName,
+    words: words.map(w => ({ word: w.word, confidence: w.confidence }))
+  });
+}
 
 // ── Simple health check ──
 app.get('/', (req, res) => res.send('EYT Live Backend is running.'));
