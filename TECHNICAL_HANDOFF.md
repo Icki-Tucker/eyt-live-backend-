@@ -74,25 +74,41 @@ the work done so far), not accidentally.
 - Automatic speaker tagging from the Meet participant name Recall.ai
   reports (first new name becomes Interviewer, everyone else becomes
   Candidate), with a manual "Swap" button as a correction if it guesses
-  wrong.
+  wrong. Confirmed with two real, distinct speakers on separate devices.
 - Dual AI + interviewer scoring across both the Transcript Upload and Live
   Interview tabs, the PDF export (now landscape, two score columns), and
   the XLSX batch export.
-- Confirmed in a real test call with one speaker talking.
+- Pronunciation (PC) scoring in Live Interview Mode now uses real
+  Deepgram word-confidence data (average confidence, specific flagged
+  words with their exact percentages), not just transcript text. See
+  "How PC confidence data actually works" below for how this is wired up.
+- Confirmed in real test calls, both single-speaker and two-speaker.
+
+## How PC confidence data actually works
+
+Getting real confidence data into Phonological Control scoring took more
+than just subscribing to another event. Two things Recall.ai's docs don't
+document, found by inspecting real webhook payloads:
+
+- `transcript.provider_data` (Deepgram's raw response, incl. per-word
+  confidence) never includes a speaker name, unlike `transcript.data`.
+- The obvious-looking IDs on the payload (`transcript.id`, `recording.id`,
+  `bot.id`) are all shared across every speaker in the call, none of them
+  identify who's talking.
+
+The fix: Deepgram's own `metadata.request_id` stays stable for one
+speaker's whole stream. `server.js` keeps a short buffer of recent
+`transcript.data` utterances (speaker name + text + timestamp). The first
+time a new `request_id` shows up on a `provider_data` event, it's matched
+against that buffer by comparing text, then remembered for the rest of the
+call, no repeated matching needed. If no match is found, that chunk of
+confidence data is dropped rather than guessed at. The tool consumes the
+result as a new `type: 'confidence'` WebSocket message, tagged the same
+way the visible transcript already is.
 
 ## Open technical items
 
-1. **Pronunciation (PC) scoring has no word-level confidence data in Live
-   Interview Mode.** The scoring prompt was built to use per-word
-   confidence scores, but Recall.ai's standard transcript webhook event
-   does not include them. The backend forwards confidence data if it is
-   ever present in the payload, but in practice it currently comes through
-   empty. Getting real confidence data would mean subscribing to a
-   different Recall.ai event type with a different payload shape (their
-   raw provider data event, not yet investigated). PC scoring currently
-   falls back gracefully to text-only evidence.
-
-2. **Anthropic API key is client-side only.** Every user pastes their own
+1. **Anthropic API key is client-side only.** Every user pastes their own
    key into Settings. This works, but is not a "just works" shared
    experience. Baking a shared key into the file was considered and
    rejected, since the tool is hosted at a public URL and the key would be
@@ -100,18 +116,16 @@ the work done so far), not accidentally.
    keyless experience is wanted, is routing Anthropic calls through
    `server.js` the same way Recall.ai calls already work. Not built yet.
 
-3. **GitHub Pages root URL serves the README, not the tool.** GitHub
-   defaults to rendering `README.md` as a homepage when there is no
-   `index.html`. The tool works fine at its own direct URL, just not at the
-   clean root URL. Also, the direct tool URL is long with `%20`-encoded
-   spaces from the filename, worth a rename if a cleaner shareable link
-   matters.
+2. **GitHub Pages root URL serves the README, not the tool.** Fixed via an
+   `index.html` redirect at the repo root. The direct tool URL is still
+   long with `%20`-encoded spaces from the filename, worth a rename if an
+   even cleaner shareable link matters.
 
-4. **Repo is under a personal GitHub account**, so every URL carries
+3. **Repo is under a personal GitHub account**, so every URL carries
    `icki-tucker`. Moving to a GitHub Organization (free) or a custom domain
    was discussed as options, neither implemented.
 
-5. **Recall.ai's API schema has already changed once** since this backend
+4. **Recall.ai's API schema has already changed once** since this backend
    was first written, the bot-creation request moved from flat
    `transcription_options` / `real_time_transcription` fields to a nested
    `recording_config` object. Already fixed in the current `server.js`, but
@@ -121,11 +135,12 @@ the work done so far), not accidentally.
 
 ## Testing status
 
-- Confirmed: bot join, single-speaker live transcription, periodic and
-  final scoring calls firing correctly.
-- Not yet tested: speaker tagging accuracy with two real speakers in one
-  call, full end-to-end PDF/XLSX export generated from an actual live
-  interview.
+- Confirmed: bot join, single-speaker and two-speaker live transcription,
+  speaker tagging accuracy across two real devices, periodic and final
+  scoring calls firing correctly, real Deepgram confidence data reaching
+  Phonological Control scoring.
+- Not yet tested: full end-to-end PDF/XLSX export generated from an
+  actual live interview.
 
 ## Cost model (for reference, not a commitment)
 
