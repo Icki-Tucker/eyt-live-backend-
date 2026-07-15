@@ -109,6 +109,7 @@ app.post('/api/webhook', (req, res) => {
 
   // Verified against Recall.ai's current transcript.data event schema (docs.recall.ai/docs/real-time-transcription).
   const speakerName = event?.data?.data?.participant?.name || event?.speaker || 'Unknown';
+  console.log('transcript.data speakerName received:', speakerName, '| raw participant field:', JSON.stringify(event?.data?.data?.participant));
   const words = event?.data?.data?.words || [];
   const text = words.map(w => w.text).join(' ') || event?.transcript || '';
   // transcript.data events are always final utterances — no is_final field is sent, so this just confirms that.
