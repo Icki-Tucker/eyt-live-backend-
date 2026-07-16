@@ -2013,9 +2013,15 @@ function generatePDF(r) {
     { abbr: 'GA', full: 'Grammatical Accuracy',  aiLevel: r.GA?.aiLevel || '—',   aiNotes: r.GA?.aiNotes || '', interviewerLevel: r.GA?.interviewerLevel || 'Pending', interviewerNotes: r.GA?.interviewerNotes || '' }
   ];
 
+  // Shared left indent for both "AI:" and "INTERVIEWER:" note labels, sized to the wider
+  // label so the note text never starts underneath it (INTERVIEWER: is far wider than AI:).
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6);
+  const noteLabelIndent = doc.getTextWidth('INTERVIEWER:') + 3;
+
   dims.forEach((d, idx) => {
-    const aiLines = wrapText(d.aiNotes || '—', notesColW - 8, 7.5);
-    const ivLines = wrapText(d.interviewerNotes || '—', notesColW - 8, 7.5);
+    const aiLines = wrapText(d.aiNotes || '—', notesColW - noteLabelIndent, 7.5);
+    const ivLines = wrapText(d.interviewerNotes || '—', notesColW - noteLabelIndent, 7.5);
     const rowH = Math.max(20, (aiLines.length + ivLines.length) * 4.2 + 16);
     ensureSpace(rowH);
 
@@ -2051,7 +2057,7 @@ function generatePDF(r) {
     doc.setTextColor(...bodyText);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
-    doc.text(aiLines, dimCols.notes + 8, y + 6, { maxWidth: notesColW - 8 });
+    doc.text(aiLines, dimCols.notes + noteLabelIndent, y + 6, { maxWidth: notesColW - noteLabelIndent });
 
     const ivY = y + 6 + aiLines.length * 4.2 + 4;
     doc.setTextColor(...greyText);
@@ -2061,7 +2067,7 @@ function generatePDF(r) {
     doc.setTextColor(...bodyText);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
-    doc.text(ivLines, dimCols.notes + 8, ivY, { maxWidth: notesColW - 8 });
+    doc.text(ivLines, dimCols.notes + noteLabelIndent, ivY, { maxWidth: notesColW - noteLabelIndent });
 
     // Row bottom border
     doc.setDrawColor(...greyLine);
@@ -4581,9 +4587,15 @@ function generatePDF(r) {
     { abbr: 'GA', full: 'Grammatical Accuracy',  aiLevel: r.GA?.aiLevel || '—',   aiNotes: r.GA?.aiNotes || '', interviewerLevel: r.GA?.interviewerLevel || 'Pending', interviewerNotes: r.GA?.interviewerNotes || '' }
   ];
 
+  // Shared left indent for both "AI:" and "INTERVIEWER:" note labels, sized to the wider
+  // label so the note text never starts underneath it (INTERVIEWER: is far wider than AI:).
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6);
+  const noteLabelIndent = doc.getTextWidth('INTERVIEWER:') + 3;
+
   dims.forEach((d, idx) =&gt; {
-    const aiLines = wrapText(d.aiNotes || '—', notesColW - 8, 7.5);
-    const ivLines = wrapText(d.interviewerNotes || '—', notesColW - 8, 7.5);
+    const aiLines = wrapText(d.aiNotes || '—', notesColW - noteLabelIndent, 7.5);
+    const ivLines = wrapText(d.interviewerNotes || '—', notesColW - noteLabelIndent, 7.5);
     const rowH = Math.max(20, (aiLines.length + ivLines.length) * 4.2 + 16);
     ensureSpace(rowH);
 
@@ -4619,7 +4631,7 @@ function generatePDF(r) {
     doc.setTextColor(...bodyText);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
-    doc.text(aiLines, dimCols.notes + 8, y + 6, { maxWidth: notesColW - 8 });
+    doc.text(aiLines, dimCols.notes + noteLabelIndent, y + 6, { maxWidth: notesColW - noteLabelIndent });
 
     const ivY = y + 6 + aiLines.length * 4.2 + 4;
     doc.setTextColor(...greyText);
@@ -4629,7 +4641,7 @@ function generatePDF(r) {
     doc.setTextColor(...bodyText);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
-    doc.text(ivLines, dimCols.notes + 8, ivY, { maxWidth: notesColW - 8 });
+    doc.text(ivLines, dimCols.notes + noteLabelIndent, ivY, { maxWidth: notesColW - noteLabelIndent });
 
     // Row bottom border
     doc.setDrawColor(...greyLine);
