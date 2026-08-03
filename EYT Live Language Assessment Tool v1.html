@@ -24,9 +24,10 @@
     --body-text:  #2c3a6e;
     --success:    #1db87a;
     --warn:       #e07b2e;
-    --radius:     10px;
-    --shadow:     0 4px 20px rgba(26,47,179,0.10);
-    --shadow-lg:  0 8px 40px rgba(26,47,179,0.14);
+    --radius:     14px;
+    --shadow:     0 2px 10px rgba(26,47,179,0.06);
+    --shadow-lg:  0 12px 32px rgba(26,47,179,0.10);
+    --sidebar-w:  260px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,48 +39,147 @@
     min-height: 100vh;
   }
 
-  /* ── HEADER ── */
-  header {
-    background: linear-gradient(90deg, #1347d0 0%, #1a55e8 100%);
-    padding: 0 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(26,47,179,0.25);
-  }
+  /* ── APP SHELL (sidebar + main column) ── */
+  .app-shell { display: flex; min-height: 100vh; }
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w); flex-shrink: 0;
+    background: linear-gradient(180deg, #0e35a8 0%, #1347d0 100%);
+    display: flex; flex-direction: column;
+    position: sticky; top: 0; height: 100vh;
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+  }
+  .sidebar-brand {
+    display: flex; align-items: center; gap: 12px;
+    padding: 26px 22px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
   }
   .logo-icon {
     width: 34px; height: 34px;
     background: var(--yellow);
-    border-radius: 8px;
+    border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 14px; color: var(--navy-dark);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.02em; flex-shrink: 0;
   }
-  .logo-name { font-weight: 800; font-size: 15px; color: #fff; letter-spacing: 0.01em; line-height: 1.1; }
-  .logo-sub  { font-size: 10px; color: rgba(255,255,255,0.65); letter-spacing: 0.08em; text-transform: uppercase; }
+  .logo-name { font-weight: 800; font-size: 14px; color: #fff; letter-spacing: 0.01em; line-height: 1.25; }
+  .logo-sub  { font-size: 10.5px; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; line-height: 1.3; }
 
-  .header-tabs { display: flex; gap: 4px; }
+  .sidebar-nav { flex: 1; padding: 18px 14px; display: flex; flex-direction: column; gap: 3px; overflow-y: auto; }
   .tab {
-    padding: 7px 18px; border-radius: 7px; border: none;
-    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.75);
-    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all 0.18s;
+    display: flex; align-items: center;
+    width: 100%; text-align: left;
+    padding: 11px 16px; border-radius: 9px; border: none;
+    background: transparent; color: rgba(255,255,255,0.68);
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
   }
-  .tab.active  { background: var(--yellow); color: var(--navy-dark); }
-  .tab:hover:not(.active) { background: rgba(255,255,255,0.18); color: #fff; }
+  .tab.active  { background: rgba(255,255,255,0.14); color: #fff; box-shadow: inset 3px 0 0 var(--yellow); }
+  .tab:hover:not(.active) { background: rgba(255,255,255,0.08); color: #fff; }
+  .tab.nav-disabled { color: rgba(255,255,255,0.32); cursor: default; }
+  .tab.nav-disabled:hover { background: transparent; color: rgba(255,255,255,0.32); }
+  .nav-soon {
+    margin-left: auto; font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.55);
+    border-radius: 100px; padding: 2px 7px;
+  }
+
+  .sidebar-footer {
+    padding: 16px 22px; border-top: 1px solid rgba(255,255,255,0.12);
+    font-size: 11px; color: rgba(255,255,255,0.45); font-weight: 600; letter-spacing: 0.03em;
+  }
+
+  /* ── MAIN COLUMN + TOPBAR ── */
+  .app-main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar {
+    background: var(--white);
+    padding: 0 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px; flex-shrink: 0;
+    position: sticky; top: 0; z-index: 90;
+    border-bottom: 1px solid var(--grey-line);
+  }
+  .topbar-title { font-size: 17px; font-weight: 800; color: var(--navy-text); letter-spacing: -0.01em; }
+  .topbar-right { display: flex; align-items: center; gap: 18px; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 600; color: var(--grey-text);
+    background: var(--off-white); border: 1px solid var(--grey-line);
+    border-radius: 100px; padding: 6px 13px;
+  }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px rgba(29,184,122,0.18); flex-shrink: 0; }
+  .user-area { display: flex; align-items: center; gap: 10px; padding-left: 18px; border-left: 1px solid var(--grey-line); }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--sky); color: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 12.5px; flex-shrink: 0;
+  }
+  .user-name { font-size: 13px; font-weight: 700; color: var(--navy-text); line-height: 1.2; }
+  .user-role { font-size: 10.5px; color: var(--grey-text); line-height: 1.2; }
 
   /* ── MAIN ── */
-  main { max-width: 960px; margin: 0 auto; padding: 36px 24px 80px; }
+  main { max-width: 1040px; margin: 0 auto; padding: 40px 32px 90px; width: 100%; }
+
+  @media (max-width: 980px) {
+    .app-shell { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: static; flex-direction: row; align-items: center; flex-wrap: wrap; }
+    .sidebar-brand { border-bottom: none; border-right: 1px solid rgba(255,255,255,0.12); padding: 14px 18px; }
+    .sidebar-nav { flex-direction: row; flex-wrap: wrap; padding: 10px 14px; }
+    .tab { width: auto; }
+    .sidebar-footer { display: none; }
+    .topbar { padding: 0 20px; }
+  }
+
+  /* ── V2: NEW ASSESSMENT SCREEN — scoped visual refinements only, other panels untouched ── */
+  #panel-assess .card { padding: 32px 36px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(26,47,179,0.05); }
+  #panel-assess .card-title { font-size: 16.5px; display: flex; align-items: center; gap: 9px; }
+  #panel-assess .card-title svg { flex-shrink: 0; }
+  #panel-assess .card-sub { margin-top: 2px; margin-bottom: 22px; }
+
+  #panel-assess .fields-grid { gap: 24px 22px; }
+  #panel-assess .field { gap: 8px; }
+  #panel-assess .field label {
+    text-transform: none; letter-spacing: 0.01em; font-size: 12.5px; color: var(--grey-text); font-weight: 600;
+  }
+  #panel-assess .eyt-input {
+    height: 48px; padding: 0 16px;
+    border: 1px solid var(--grey-line);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  #panel-assess .eyt-input::placeholder { color: #a7aec8; }
+  #panel-assess .eyt-input:focus {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 4px rgba(19,71,208,0.10);
+  }
+  #assessBtn.btn-primary {
+    height: 48px; padding: 0 32px; font-size: 15.5px; border-radius: 10px; gap: 9px;
+  }
+  #assessBtn.btn-primary:hover {
+    box-shadow: 0 6px 18px rgba(245,166,35,0.4);
+  }
+  #assessBtn.btn-primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(245,166,35,0.3); }
+
+  /* Upload card is exclusive to this screen already, safe to restyle directly */
+  .upload-area { padding: 60px 40px; }
+  .upload-icon { font-size: 52px; margin-bottom: 16px; }
+  .upload-title { font-size: 19px; letter-spacing: -0.01em; }
+  .upload-hint { font-size: 13.5px; }
+  .format-tag { color: var(--grey-text); border-color: var(--grey-line); }
+
+  /* API status banner — "AI Service Connected" — flat, no gradient */
+  .ai-status-banner {
+    background: #f0faf5;
+    border: 1px solid rgba(29,184,122,0.3);
+    border-radius: var(--radius);
+    padding: 14px 18px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .ai-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+  .ai-status-title { font-weight: 700; font-size: 13px; color: #0f7a4a; }
+  .ai-status-sub { font-size: 12px; color: var(--grey-text); }
 
   .panel { display: none; }
   .panel.active { display: block; }
@@ -638,22 +738,44 @@
 </head>
 <body>
 
-<!-- ── HEADER ── -->
-<header>
-  <div class="logo">
-    <div class="logo-icon">EYT</div>
-    <div>
-      <div class="logo-name">EXTEND YOUR TEAM</div>
-      <div class="logo-sub">Language Assessor Tool</div>
+<div class="app-shell">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo-icon">EYT</div>
+      <div>
+        <div class="logo-name">Extend Your Team</div>
+        <div class="logo-sub">Assessment Platform</div>
+      </div>
     </div>
-  </div>
-  <div class="header-tabs">
-    <button class="tab active" onclick="showPanel('assess', this)">Assess</button>
-    <button class="tab" onclick="showPanel('live', this)">🎙 Live Interview</button>
-    <button class="tab" onclick="showPanel('batch', this)">Batch Tracker</button>
-    <button class="tab" onclick="showPanel('settings', this)">Settings</button>
-  </div>
-</header>
+    <nav class="sidebar-nav">
+      <button class="tab nav-disabled" disabled>Dashboard <span class="nav-soon">Soon</span></button>
+      <button class="tab active" onclick="showPanel('assess', this); setPageTitle('New Assessment')">New Assessment</button>
+      <button class="tab" onclick="showPanel('live', this); setPageTitle('Live Interview')">🎙 Live Interview</button>
+      <button class="tab" onclick="showPanel('batch', this); setPageTitle('Batch Tracker')">Batch Tracker</button>
+      <button class="tab nav-disabled" disabled>Reports <span class="nav-soon">Soon</span></button>
+      <button class="tab" onclick="showPanel('settings', this); setPageTitle('Settings')">Settings</button>
+    </nav>
+    <div class="sidebar-footer">Version 2.0</div>
+  </aside>
+
+  <div class="app-main-col">
+
+    <!-- ── TOPBAR ── -->
+    <header class="topbar">
+      <div class="topbar-title" id="page-title">New Assessment</div>
+      <div class="topbar-right">
+        <span class="status-pill"><span class="status-dot"></span>System Ready</span>
+        <div class="user-area">
+          <div class="user-avatar">A</div>
+          <div>
+            <div class="user-name">Assessor</div>
+            <div class="user-role">EYT Team</div>
+          </div>
+        </div>
+      </div>
+    </header>
 
 <main>
 
@@ -661,21 +783,28 @@
   <div class="panel active" id="panel-assess">
 
     <!-- Key status indicator -->
-    <div id="key-status-bar" style="display:none;background:var(--sky);border:1px solid var(--sky-mid);border-radius:8px;padding:9px 16px;margin-bottom:16px;font-size:12px;color:var(--navy);display:flex;align-items:center;gap:8px;">
-      <span style="font-weight:700;">✓ API key ready.</span>
-      <span style="color:var(--grey-text);">Go to Settings to change it.</span>
+    <div id="key-status-bar" class="ai-status-banner" style="display:none;">
+      <span class="ai-status-dot"></span>
+      <div>
+        <div class="ai-status-title">AI Service Connected</div>
+        <div class="ai-status-sub">Your assessment engine is ready.</div>
+      </div>
     </div>
 
     <!-- Candidate Info -->
     <div class="card">
-      <div class="card-title" style="margin-bottom:14px;">Candidate Information</div>
+      <div class="card-title" style="margin-bottom:4px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Candidate Information
+      </div>
+      <div class="card-sub">Enter the candidate details that will appear in the assessment report.</div>
       <div class="fields-grid">
         <div class="field">
-          <label>Candidate Name</label>
+          <label>Candidate name</label>
           <input class="eyt-input" id="candName" type="text" placeholder="e.g. Juan dela Cruz" />
         </div>
         <div class="field">
-          <label>Position Applied For</label>
+          <label>Position applied for</label>
           <input class="eyt-input" id="candRole" type="text" placeholder="e.g. Data Analyst" />
         </div>
         <div class="field">
@@ -683,7 +812,7 @@
           <input class="eyt-input" id="candDept" type="text" placeholder="e.g. Operations" />
         </div>
         <div class="field">
-          <label>Assessor Name</label>
+          <label>Assessor name</label>
           <input class="eyt-input" id="assessorName" type="text" placeholder="e.g. Victoria Tucker" />
         </div>
       </div>
@@ -691,7 +820,8 @@
 
     <!-- Upload -->
     <div class="card">
-      <div class="card-title" style="margin-bottom:14px;">Upload Interview Transcript</div>
+      <div class="card-title" style="margin-bottom:4px;">Upload Transcript</div>
+      <div class="card-sub">Upload a DOCX or TXT interview transcript.<br>The AI will analyze grammar, vocabulary, and linguistic accuracy.</div>
 
       <div class="upload-area" id="uploadArea"
            ondragover="handleDrag(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
@@ -1220,7 +1350,9 @@
 
   </div>
 
-</main>
+    </main>
+  </div>
+</div>
 
 <div id="toast"></div>
 
@@ -1287,6 +1419,13 @@ function showPanel(name, btn) {
   document.getElementById('panel-' + name).classList.add('active');
   if (btn) btn.classList.add('active');
   if (name === 'batch') renderBatch();
+}
+
+// New in the V2 shell: updates the topbar title to match the active sidebar nav item.
+// Purely cosmetic — does not touch showPanel's own logic above.
+function setPageTitle(title) {
+  const el = document.getElementById('page-title');
+  if (el) el.textContent = title;
 }
 
 // ── API KEY ──
@@ -1432,14 +1571,16 @@ DOMAIN VOCABULARY WARNING: Job-specific terms (SQL, Python, Tableau, stakeholder
 
 A2 LR: Relies on a small set of everyday words and repeats the same simple phrasing. When a needed word isn't known, the candidate often stalls, switches topic, or gives up on the idea rather than working around it.
 
-B1 LR: Vocabulary covers familiar and routine topics adequately but thins out quickly outside them. Sentences tend to follow the same handful of patterns. When a word is missing, the candidate can sometimes describe around it, but clumsily.
+B1 LR: Uses enough vocabulary and basic structures to handle most routine issues (personal details, simple background information, basic troubleshooting), but often relies on simple sentence patterns. Frequently repeats similar phrases and may need to paraphrase or circumlocute when topics become less familiar or more complex.
 
-B2 LR: Vocabulary is broad enough to discuss work-related and moderately abstract topics without obvious gaps. Sentence variety is noticeable, not just simple statements strung together. Can substitute a different word or phrase smoothly when the first choice doesn't come.
+B2 LR: Has a sufficient range of vocabulary and structures to give clear descriptions, explain options, and handle most topics, including some unexpected ones. Can use some complex sentence forms (e.g., conditionals, relative clauses) to express conditions, consequences, and comparisons.
 
-C1 LR: Chooses precise, sometimes specialized vocabulary rather than settling for a generic word. Varies sentence structure naturally depending on what's being expressed. Works around an unfamiliar word so smoothly it barely registers as a gap.
+C1 LR: Has a good command of a broad range of vocabulary and structures, allowing clear, precise expression on a wide range of topics, including complex or technical ones. Can tailor language to different listeners (e.g., less technical vs. more technical) and adjust explanations without feeling linguistically restricted.
 
-Score B1 if: vocabulary covers routine topics adequately but thins out fast outside them; sentences repeat the same handful of patterns; can describe around a missing word, but clumsily.
-Score B2 if: vocabulary is broad enough for work-related and moderately abstract topics without obvious gaps; sentence variety is noticeable; substitutes words smoothly when needed. NOTE: Filler words ("technically", "basically") repeated frequently are a Fluency concern, NOT an LR disqualifier on their own.
+C2 LR: Can exploit a comprehensive and reliable mastery of a very wide range of language to formulate thoughts precisely, give emphasis, differentiate, and eliminate ambiguity, even in complex or emotionally charged situations. Shows no signs of needing to restrict what they want to say; can reformulate and nuance explanations effortlessly to match the listener's needs.
+
+Score B1 if: vocabulary and basic structures are enough for most routine topics, but relies on simple sentence patterns and repeats similar phrases; needs to paraphrase or circumlocute once topics get less familiar.
+Score B2 if: vocabulary and structures are sufficient for clear descriptions, explaining options, and handling some unexpected topics; can use some complex sentence forms (conditionals, relative clauses). NOTE: Filler words ("technically", "basically") repeated frequently are a Fluency concern, NOT an LR disqualifier on their own. A single stall, or reaching for a simpler word once, is a SLIP (see SLIP VS. PATTERN below) and must not by itself keep the score at B1.
 
 GRAMMATICAL ACCURACY (GA) - EYT Scoring Guide
 ===============================================
@@ -1447,14 +1588,26 @@ GA measures whether the candidate builds sentences correctly, including tense, a
 
 A2 GA: Builds short, simple sentences correctly but breaks down as soon as tense, negation, or word order gets more demanding. Errors are frequent enough that the listener sometimes has to work out what was meant.
 
-B1 GA: Handles everyday sentence patterns reliably. Runs into trouble with less common tenses, conditionals, or longer sentences, and errors start appearing when the candidate tries to say something more complicated than the question requires.
+B1 GA: Grammar is generally understandable, but there are frequent errors (verb tense, agreement, prepositions, articles) that may occasionally cause minor misunderstandings. Can produce simple sentence patterns reliably; errors increase in more complex structures.
 
-B2 GA: Constructs accurate sentences across most topics, including some complexity like multi-clause sentences. Occasional slips happen under time pressure or with less familiar structures, but the candidate usually catches and corrects them without help.
+B2 GA: Shows a relatively high degree of grammatical control; makes errors, but they do not typically cause misunderstanding, and the candidate can often self-correct. Complex sentence structures (e.g., conditionals, subordinate clauses) are used with reasonable accuracy, though not consistently error-free.
 
-C1 GA: Maintains accuracy even in extended, complex responses. Errors are rare and don't interfere with understanding. Uses advanced structures (conditionals, passive voice, embedded clauses) naturally rather than avoiding them.
+C1 GA: Consistently maintains a high degree of grammatical accuracy; errors are rare, hard to notice, and usually self-corrected. Can handle complex structures smoothly (e.g., embedded clauses, passive constructions) even under time pressure.
 
-Score B1 GA if: handles everyday sentence patterns reliably, but trouble appears with less common tenses, conditionals, or longer sentences.
-Score B2 GA if: accurate across most topics including some multi-clause complexity; occasional slips under pressure that the candidate usually self-corrects without help. Do NOT require zero errors for B2.
+C2 GA: Grammar is virtually error-free; any slips are rare and insignificant, with immediate self-correction if they occur. Can manipulate complex grammatical forms to express subtle distinctions (e.g., hedging, emphasis, hypothetical scenarios) with complete control.
+
+Score B1 GA if: the transcript shows a PATTERN (see SLIP VS. PATTERN below) of breakdown once sentences go beyond what the question required — not merely that some errors occurred.
+Score B2 GA if: grammatical control is relatively high; errors don't typically cause misunderstanding and are often self-corrected; complex structures (conditionals, subordinate clauses) are attempted with reasonable accuracy. Do NOT require zero errors for B2, and do NOT let a list of isolated slips outweigh an otherwise-accurate transcript.
+
+SLIP VS. PATTERN — HOW TO WEIGH ERRORS (applies to LR and GA)
+================================================================
+Not every error should pull a score down. Before scoring, sort what you found into one of two buckets:
+
+A SLIP: an error type that occurs only once or twice in the entire transcript, OR an error the candidate visibly self-corrects (rephrases, restarts, or fixes it unprompted). Slips happen normally at B2 and even C1. Still list them under ERRORS OBSERVED for completeness, but a slip on its own must NEVER be the reason a score stays at the lower level.
+
+A PATTERN: the same error type recurring three or more times across the transcript, uncorrected, showing the candidate cannot reliably produce that structure or vocabulary range on demand. Patterns — not the total number of numbered items in ERRORS OBSERVED — are what justify keeping the score at the lower level.
+
+When writing WHY NOT [NEXT LEVEL], name the specific recurring pattern that prevents the higher level. If everything you found is a slip and none of it rises to a pattern, that is evidence FOR the higher level, not against it.
 
 SUITABILITY
 ===========
@@ -1892,10 +2045,16 @@ function generatePDF(r) {
 
   let y = 0;
 
+  // Helper: strip Unicode characters the standard PDF fonts can't measure/render correctly
+  // (e.g. arrows like → cause jsPDF to mis-space the whole line). Found via isolated testing.
+  function pdfSafe(text) {
+    return (text || '').replace(/→/g, '->').replace(/←/g, '<-').replace(/↔/g, '<->');
+  }
+
   // Helper: wrap text and return lines
   function wrapText(text, maxW, fontSize) {
     doc.setFontSize(fontSize);
-    return doc.splitTextToSize(text || '—', maxW);
+    return doc.splitTextToSize(pdfSafe(text) || '—', maxW);
   }
 
   // Helper: filled rect
@@ -2626,9 +2785,9 @@ function buildLiveSysPrompt(isFinal, prevContext) {
 
 TRANSCRIPT: Live speech-to-text, NO automatic punctuation. Never flag missing punctuation as GA error. Judge grammar from word order and agreement only.
 
-LR: Job interviews naturally stay on-topic — do NOT penalise domain focus. B1=vocabulary adequate for routine topics but thins out fast elsewhere, repeats the same sentence patterns; B2=broad vocabulary across work topics with noticeable sentence variety, substitutes smoothly when a word is missing; C1=precise or specialized word choice, natural sentence variety, unfamiliar-word gaps barely register.
-GA: B1=handles everyday patterns reliably but struggles with less common tenses, conditionals, or longer sentences; B2=accurate across most topics including multi-clause complexity, occasional self-corrected slips under pressure; C1=accurate even in extended complex responses, uses advanced structures (conditionals, passive voice, embedded clauses) naturally.
-FL: Count fillers (um,uh,like,you know) visible in transcript. B1=noticeable hesitation, organizes simple ideas but loses coherence in longer responses; B2=natural pace with minor hesitation, ideas organized and easy to follow; C1=smooth and confident, well organized even responding on the spot.
+LR: Job interviews naturally stay on-topic — do NOT penalise domain focus. A2=relies on a small set of everyday words, repeats the same simple phrasing, stalls or gives up when a word is missing; B1=enough vocabulary for most routine topics but relies on simple sentence patterns and repeats similar phrases, needs to paraphrase once topics get less familiar; B2=sufficient range for clear descriptions and some complex forms (conditionals, relative clauses), handles some unexpected topics; C1=broad vocabulary and structures allow precise expression on complex or technical topics, adjusts language to the listener; C2=comprehensive, reliable mastery, formulates precisely and eliminates ambiguity even in charged situations, reformulates effortlessly. A single stall or one reach for a simpler word is a SLIP, not a disqualifier — only a recurring inability to vary vocabulary should hold the score down.
+GA: A2=short simple sentences are correct but break down once tense, negation, or word order gets more demanding; B1=grammar generally understandable but frequent errors (tense, agreement, prepositions, articles) that may occasionally cause minor misunderstandings, more errors as sentences get complex; B2=relatively high grammatical control, errors don't typically cause misunderstanding and are often self-corrected, attempts complex structures (conditionals, subordinate clauses) with reasonable accuracy; C1=consistently high accuracy, errors rare and usually self-corrected, handles complex structures smoothly even under time pressure; C2=virtually error-free, any slips are rare and immediately self-corrected. Do NOT require zero errors for B2 — weigh a recurring, uncorrected error pattern against isolated self-corrected slips, and don't let a slip alone hold the score at B1.
+FL: Count fillers (um,uh,like,you know) visible in transcript. A2=very short responses, long pauses, breaks down even on simple topics; B1=uneven speech with noticeable pauses for planning and repair, loses coherence in longer responses; B2=fairly even tempo with few long pauses, ideas organized and easy to follow, handles routine follow-ups without breakdown; C1=fluent and almost effortless, rarely searches for words, well organized even responding on the spot; C2=smoothly flowing with natural rhythm, full control even in complex or sensitive exchanges.
 
 ${isFinal?'COMPLETE interview. Give final assessment.':'MID-INTERVIEW segment. Score conservatively.'}${prevContext}
 
@@ -4007,14 +4166,16 @@ DOMAIN VOCABULARY WARNING: Job-specific terms (SQL, Python, Tableau, stakeholder
 
 A2 LR: Relies on a small set of everyday words and repeats the same simple phrasing. When a needed word isn't known, the candidate often stalls, switches topic, or gives up on the idea rather than working around it.
 
-B1 LR: Vocabulary covers familiar and routine topics adequately but thins out quickly outside them. Sentences tend to follow the same handful of patterns. When a word is missing, the candidate can sometimes describe around it, but clumsily.
+B1 LR: Uses enough vocabulary and basic structures to handle most routine issues (personal details, simple background information, basic troubleshooting), but often relies on simple sentence patterns. Frequently repeats similar phrases and may need to paraphrase or circumlocute when topics become less familiar or more complex.
 
-B2 LR: Vocabulary is broad enough to discuss work-related and moderately abstract topics without obvious gaps. Sentence variety is noticeable, not just simple statements strung together. Can substitute a different word or phrase smoothly when the first choice doesn't come.
+B2 LR: Has a sufficient range of vocabulary and structures to give clear descriptions, explain options, and handle most topics, including some unexpected ones. Can use some complex sentence forms (e.g., conditionals, relative clauses) to express conditions, consequences, and comparisons.
 
-C1 LR: Chooses precise, sometimes specialized vocabulary rather than settling for a generic word. Varies sentence structure naturally depending on what's being expressed. Works around an unfamiliar word so smoothly it barely registers as a gap.
+C1 LR: Has a good command of a broad range of vocabulary and structures, allowing clear, precise expression on a wide range of topics, including complex or technical ones. Can tailor language to different listeners (e.g., less technical vs. more technical) and adjust explanations without feeling linguistically restricted.
 
-Score B1 if: vocabulary covers routine topics adequately but thins out fast outside them; sentences repeat the same handful of patterns; can describe around a missing word, but clumsily.
-Score B2 if: vocabulary is broad enough for work-related and moderately abstract topics without obvious gaps; sentence variety is noticeable; substitutes words smoothly when needed. NOTE: Filler words ("technically", "basically") repeated frequently are a Fluency concern, NOT an LR disqualifier on their own.
+C2 LR: Can exploit a comprehensive and reliable mastery of a very wide range of language to formulate thoughts precisely, give emphasis, differentiate, and eliminate ambiguity, even in complex or emotionally charged situations. Shows no signs of needing to restrict what they want to say; can reformulate and nuance explanations effortlessly to match the listener's needs.
+
+Score B1 if: vocabulary and basic structures are enough for most routine topics, but relies on simple sentence patterns and repeats similar phrases; needs to paraphrase or circumlocute once topics get less familiar.
+Score B2 if: vocabulary and structures are sufficient for clear descriptions, explaining options, and handling some unexpected topics; can use some complex sentence forms (conditionals, relative clauses). NOTE: Filler words ("technically", "basically") repeated frequently are a Fluency concern, NOT an LR disqualifier on their own. A single stall, or reaching for a simpler word once, is a SLIP (see SLIP VS. PATTERN below) and must not by itself keep the score at B1.
 
 GRAMMATICAL ACCURACY (GA) - EYT Scoring Guide
 ===============================================
@@ -4022,14 +4183,26 @@ GA measures whether the candidate builds sentences correctly, including tense, a
 
 A2 GA: Builds short, simple sentences correctly but breaks down as soon as tense, negation, or word order gets more demanding. Errors are frequent enough that the listener sometimes has to work out what was meant.
 
-B1 GA: Handles everyday sentence patterns reliably. Runs into trouble with less common tenses, conditionals, or longer sentences, and errors start appearing when the candidate tries to say something more complicated than the question requires.
+B1 GA: Grammar is generally understandable, but there are frequent errors (verb tense, agreement, prepositions, articles) that may occasionally cause minor misunderstandings. Can produce simple sentence patterns reliably; errors increase in more complex structures.
 
-B2 GA: Constructs accurate sentences across most topics, including some complexity like multi-clause sentences. Occasional slips happen under time pressure or with less familiar structures, but the candidate usually catches and corrects them without help.
+B2 GA: Shows a relatively high degree of grammatical control; makes errors, but they do not typically cause misunderstanding, and the candidate can often self-correct. Complex sentence structures (e.g., conditionals, subordinate clauses) are used with reasonable accuracy, though not consistently error-free.
 
-C1 GA: Maintains accuracy even in extended, complex responses. Errors are rare and don't interfere with understanding. Uses advanced structures (conditionals, passive voice, embedded clauses) naturally rather than avoiding them.
+C1 GA: Consistently maintains a high degree of grammatical accuracy; errors are rare, hard to notice, and usually self-corrected. Can handle complex structures smoothly (e.g., embedded clauses, passive constructions) even under time pressure.
 
-Score B1 GA if: handles everyday sentence patterns reliably, but trouble appears with less common tenses, conditionals, or longer sentences.
-Score B2 GA if: accurate across most topics including some multi-clause complexity; occasional slips under pressure that the candidate usually self-corrects without help. Do NOT require zero errors for B2.
+C2 GA: Grammar is virtually error-free; any slips are rare and insignificant, with immediate self-correction if they occur. Can manipulate complex grammatical forms to express subtle distinctions (e.g., hedging, emphasis, hypothetical scenarios) with complete control.
+
+Score B1 GA if: the transcript shows a PATTERN (see SLIP VS. PATTERN below) of breakdown once sentences go beyond what the question required — not merely that some errors occurred.
+Score B2 GA if: grammatical control is relatively high; errors don't typically cause misunderstanding and are often self-corrected; complex structures (conditionals, subordinate clauses) are attempted with reasonable accuracy. Do NOT require zero errors for B2, and do NOT let a list of isolated slips outweigh an otherwise-accurate transcript.
+
+SLIP VS. PATTERN — HOW TO WEIGH ERRORS (applies to LR and GA)
+================================================================
+Not every error should pull a score down. Before scoring, sort what you found into one of two buckets:
+
+A SLIP: an error type that occurs only once or twice in the entire transcript, OR an error the candidate visibly self-corrects (rephrases, restarts, or fixes it unprompted). Slips happen normally at B2 and even C1. Still list them under ERRORS OBSERVED for completeness, but a slip on its own must NEVER be the reason a score stays at the lower level.
+
+A PATTERN: the same error type recurring three or more times across the transcript, uncorrected, showing the candidate cannot reliably produce that structure or vocabulary range on demand. Patterns — not the total number of numbered items in ERRORS OBSERVED — are what justify keeping the score at the lower level.
+
+When writing WHY NOT [NEXT LEVEL], name the specific recurring pattern that prevents the higher level. If everything you found is a slip and none of it rises to a pattern, that is evidence FOR the higher level, not against it.
 
 SUITABILITY
 ===========
@@ -4467,10 +4640,16 @@ function generatePDF(r) {
 
   let y = 0;
 
+  // Helper: strip Unicode characters the standard PDF fonts can't measure/render correctly
+  // (e.g. arrows like → cause jsPDF to mis-space the whole line). Found via isolated testing.
+  function pdfSafe(text) {
+    return (text || '').replace(/→/g, '-&gt;').replace(/←/g, '&lt;-').replace(/↔/g, '&lt;-&gt;');
+  }
+
   // Helper: wrap text and return lines
   function wrapText(text, maxW, fontSize) {
     doc.setFontSize(fontSize);
-    return doc.splitTextToSize(text || '—', maxW);
+    return doc.splitTextToSize(pdfSafe(text) || '—', maxW);
   }
 
   // Helper: filled rect
@@ -4513,7 +4692,7 @@ function generatePDF(r) {
   doc.setTextColor(...white);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
-  doc.text('EXTEND YOUR TEAM', margin + 21, 10);
+  doc.text(11', margin + 21, 10);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
   doc.text('EYT English Proficiency Assessment', margin + 21, 17);
