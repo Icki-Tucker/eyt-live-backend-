@@ -226,6 +226,22 @@
     background: var(--sky); border: 1px solid var(--sky-mid); border-radius: 8px;
     padding: 10px 14px; font-size: 12px; color: var(--navy); margin-bottom: 14px;
   }
+  #panel-reference .phase-card { margin-bottom: 22px; }
+  #panel-reference .phase-card:last-child { margin-bottom: 0; }
+  #panel-reference .phase-title { font-size: 14px; font-weight: 800; color: var(--navy-text); }
+  #panel-reference .phase-target {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--navy); background: var(--sky); border-radius: 100px; padding: 2px 9px; margin-left: 8px;
+  }
+  #panel-reference .phase-focus { font-size: 12px; color: var(--grey-text); font-style: italic; margin: 3px 0 10px; }
+  #panel-reference .q-row {
+    display: grid; grid-template-columns: 36px 1fr; gap: 12px;
+    padding: 8px 0; border-bottom: 1px solid var(--grey-line);
+  }
+  #panel-reference .q-row:last-child { border-bottom: none; }
+  #panel-reference .q-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--navy); font-weight: 700; }
+  #panel-reference .q-text { font-size: 13px; color: var(--body-text); line-height: 1.5; }
+  #panel-reference .q-tag { display: block; font-size: 11px; color: var(--grey-text); margin-top: 3px; }
 
   .tagalog-toggle {
     display: flex; align-items: flex-start; gap: 9px;
@@ -1375,6 +1391,51 @@
       <div class="card-title" style="margin-bottom:4px;">Scoring Reference Guide</div>
       <div class="card-sub">A quick lookup for how each CEFR level is defined across all four dimensions. Matches the criteria the AI assessor uses, so you can compare notes during calibration or when you're unsure how to score something yourself.</div>
       <div class="ref-note">This is a reference only, not an automated score. Use your own judgment, especially for Phonological Control, which is always scored by the assessor rather than the AI.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:4px;">Interview Question Guide</div>
+      <div class="card-sub">Ask questions from all four phases to fully test a candidate's range. Skipping later phases means Grammatical Accuracy and Linguistic Range can't be verified above a basic level — the tool flags this as "untested range" rather than assuming a low score is accurate. Exact wording can vary; match by intent and topic.</div>
+
+      <div class="phase-card">
+        <div class="phase-title">Phase 1 — Narrative &amp; Baseline<span class="phase-target">Targets B1</span></div>
+        <div class="phase-focus">Focus: Consistency in high-frequency grammar and basic professional background.</div>
+        <div class="q-row"><span class="q-num">IQ1</span><div><span class="q-text">"Walk me through what a normal day looks like for you at work."</span><span class="q-tag">Fluency / GA (Present Tense)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ2</span><div><span class="q-text">"Tell me about something you finished at work recently. What part did you play in it?"</span><span class="q-tag">GA (Past Tense)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ3</span><div><span class="q-text">"What abilities do you think someone needs to do well in your line of work?"</span><span class="q-tag">LR (Professional vocabulary)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ4</span><div><span class="q-text">"What do you like to do outside of work?"</span><span class="q-tag">Fluency (baseline tempo)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ5</span><div><span class="q-text">"Suppose someone just joined your team. What would you want them to know first?"</span><span class="q-tag">LR / PC (social navigation)</span></div></div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-title">Phase 2 — Technical Detail &amp; Process<span class="phase-target">Targets B2</span></div>
+        <div class="phase-focus">Focus: Handling non-routine professional subjects and multi-step explanations.</div>
+        <div class="q-row"><span class="q-num">IQ6</span><div><span class="q-text">"How has your industry shifted over the past several years, from what you've seen?"</span><span class="q-tag">GA (Present Perfect / complex structures)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ7</span><div><span class="q-text">"Take me through the steps your team follows when a customer has a complaint."</span><span class="q-tag">Fluency / Cohesion (transitions)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ8</span><div><span class="q-text">"Why do you think some customers choose to do things online instead of in person?"</span><span class="q-tag">LR (comparative/contrastive language)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ9</span><div><span class="q-text">"Tell me about a time you had to pick up a new tool or system fast. How did that go?"</span><span class="q-tag">Fluency (tempo under pressure)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ10</span><div><span class="q-text">"What sets your company apart from others doing similar work?"</span><span class="q-tag">LR (business-specific verbs)</span></div></div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-title">Phase 3 — Abstraction &amp; Hypotheticals<span class="phase-target">Targets C1/C2</span></div>
+        <div class="phase-focus">Focus: Executive register, nuance, and finer shades of meaning.</div>
+        <div class="q-row"><span class="q-num">IQ11</span><div><span class="q-text">"If you were suddenly in charge of the whole company, what's the first big thing you'd change, and why?"</span><span class="q-tag">GA (Conditionals: If I were... I would)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ12</span><div><span class="q-text">"How much of a role do you think automated tools will end up playing in decisions people currently make?"</span><span class="q-tag">LR (nuance and qualifiers)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ13</span><div><span class="q-text">"Do you think the saying 'the customer is always right' actually holds up? Make your case either way."</span><span class="q-tag">Fluency / LR (spontaneous argumentation)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ14</span><div><span class="q-text">"How would you break down a complicated idea from your field to somebody with zero background in it?"</span><span class="q-tag">LR (style and register adjustment)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ15</span><div><span class="q-text">"Do you think there's a real connection between how financially stable people feel and how much they trust each other? What's your take?"</span><span class="q-tag">C2 (abstract concept formulation)</span></div></div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-title">Phase 4 — Stress Tests &amp; Role-Plays<span class="phase-target">Targets PC / composure</span></div>
+        <div class="phase-focus">Focus: Composure, tone, and de-escalation skills.</div>
+        <div class="q-row"><span class="q-num">IQ16</span><div><span class="q-text">"Pretend I'm a customer who's upset because I found a mistake on my bill. Put me at ease."</span><span class="q-tag">PC (tone under stress)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ17</span><div><span class="q-text">"Say I proposed an approach you were pretty sure wouldn't work. How would you push back respectfully?"</span><span class="q-tag">LR (diplomatic language)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ18</span><div><span class="q-text">"Walk me through the upsides and downsides of a fixed monthly cost versus one that can change over time."</span><span class="q-tag">GA (comparative structures)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ19</span><div><span class="q-text">"If your resources were cut by a fifth overnight, what would you focus on first?"</span><span class="q-tag">Fluency (pause control vs. filler words)</span></div></div>
+        <div class="q-row"><span class="q-num">IQ20</span><div><span class="q-text">"Where do you want to be in your career a decade from now?"</span><span class="q-tag">GA (future intentionality)</span></div></div>
+      </div>
     </div>
 
     <div class="card">
