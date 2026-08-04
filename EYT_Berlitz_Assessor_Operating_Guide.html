@@ -131,7 +131,7 @@
 
     <section id="setup">
       <h2><span class="eyebrow">Before you start</span>Save your API key</h2>
-      <p class="lede">Settings only has one key to manage now: <strong>Anthropic</strong>, which powers all four dimension scores (Linguistic Range, Grammatical Accuracy, Fluency, Phonological Control). There's nothing Deepgram-related to paste anymore — Recall.ai runs that on its own end for Live Interview Mode.</p>
+      <p class="lede">Settings only has one key to manage: <strong>Anthropic</strong>, which powers all four dimension scores (Linguistic Range, Grammatical Accuracy, Fluency, Phonological Control).</p>
 
       <ol class="steps">
         <li><strong>Open the <span class="btn-ref">Settings</span> tab.</strong>
@@ -142,7 +142,7 @@
 
       <div class="callout info">
         <span class="ic">ⓘ</span>
-        <p>The key never leaves your browser except to call Anthropic's API directly — there's no backend involved in scoring itself.</p>
+        <p>The key never leaves your browser except to call Anthropic directly for scoring.</p>
       </div>
     </section>
 
@@ -198,7 +198,7 @@
         <li><strong>Paste the Google Meet link</strong> into the field under Recording.</li>
         <li><strong>Click Start Interview.</strong>
           <p>The bot is sent into the call — this takes a few seconds. Status updates appear above the transcript panel while it connects.</p>
-          <p class="detail">If the backend has been idle a while, the very first request can take 30–60 seconds to wake up (free-tier cold start) — this is expected, not a failure.</p>
+          <p class="detail">If this is the first interview started in a while, it can take 30–60 seconds to connect — this is expected, not a failure.</p>
         </li>
         <li><strong>Let the interview run.</strong>
           <p>The transcript fills in below the scoring panel as people speak. Linguistic Range, Grammar, and Fluency update roughly every 90 seconds; Pronunciation is scored once, at the end, from the call's word-confidence data.</p>
@@ -243,17 +243,17 @@
 
       <div class="callout warn">
         <span class="ic">⚠</span>
-        <p><strong>Not yet tested against a real call.</strong> The backend's mapping of Recall.ai's data — who's speaking, and the word-confidence numbers behind the Pronunciation score — is a best-effort guess at the payload shape. Run one real test interview before trusting this for an actual candidate, and flag it if speaker names or Pronunciation evidence look off.</p>
+        <p><strong>Speaker tagging and Pronunciation evidence are still being verified.</strong> Who's speaking, and the word-confidence numbers behind the Pronunciation score, are best-effort. Run one real test interview before trusting this for an actual candidate, and flag it if speaker names or Pronunciation evidence look off.</p>
       </div>
 
       <div class="callout warn">
         <span class="ic">⚠</span>
-        <p><strong>Billing is shared.</strong> Every Live Interview across every assessor draws from the same Recall.ai account and API key. Keep an eye on usage once more than one person is running interviews.</p>
+        <p><strong>Billing is shared.</strong> Every Live Interview across every assessor draws from the same account. Keep an eye on usage once more than one person is running interviews.</p>
       </div>
 
       <div class="callout info">
         <span class="ic">ⓘ</span>
-        <p>The backend's free tier spins down when idle. For a real interview where timing matters, consider the paid tier (~$7/mo) so Start Interview doesn't stall on a cold start.</p>
+        <p>The service spins down when idle on the free tier. For a real interview where timing matters, consider upgrading to the paid tier (~$7/mo) so Start Interview doesn't stall.</p>
       </div>
     </section>
 
