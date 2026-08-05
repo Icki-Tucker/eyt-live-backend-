@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EYT Berlitz Assessor — Operating Guide</title>
+<title>EYT Assessment Platform — Operating Guide</title>
 <style>
   :root{
     --navy:#1347D0; --navy-deep:#0A2580; --ink:#1C2541; --paper:#F7F9FD;
@@ -109,7 +109,7 @@
 <div class="topbar">
   <div class="mark">EYT</div>
   <div>
-    <h1>Berlitz Assessor — Operating Guide</h1>
+    <h1>EYT Assessment Platform — Operating Guide</h1>
     <p>How to run a candidate assessment, live or from a transcript</p>
   </div>
 </div>
@@ -118,19 +118,31 @@
   <nav class="toc" aria-label="Sections">
     <div class="toc-label">On this page</div>
     <ol>
-      <li><a href="#setup">1. One-time setup</a></li>
-      <li><a href="#choose">2. Choose your path</a></li>
-      <li><a href="#upload">3. Transcript Upload</a></li>
-      <li><a href="#live">4. Live Interview Mode</a></li>
-      <li><a href="#batch">5. Batch Tracker</a></li>
-      <li><a href="#limits">6. Known limits</a></li>
+      <li><a href="#signin">1. Sign in</a></li>
+      <li><a href="#setup">2. Save your API key</a></li>
+      <li><a href="#choose">3. Choose your path</a></li>
+      <li><a href="#upload">4. Transcript Upload</a></li>
+      <li><a href="#live">5. Live Interview Mode</a></li>
+      <li><a href="#batch">6. Batch Tracker</a></li>
+      <li><a href="#reference">7. Reference Guide</a></li>
+      <li><a href="#limits">8. Known limits</a></li>
     </ol>
   </nav>
 
   <main>
 
+    <section id="signin">
+      <h2><span class="eyebrow">Before you start</span>Sign in</h2>
+      <p class="lede">The tool is restricted to <strong>@extendyourteam.com</strong> Google accounts. Click <strong>Sign in with Google</strong> on the landing screen and use your work account.</p>
+
+      <div class="callout info">
+        <span class="ic">ⓘ</span>
+        <p>Access is also controlled by an allowlist. If you sign in and get denied, ask an admin to add your email under <span class="btn-ref">Settings → Manage Access</span>.</p>
+      </div>
+    </section>
+
     <section id="setup">
-      <h2><span class="eyebrow">Before you start</span>Save your API key</h2>
+      <h2><span class="eyebrow">Then</span>Save your API key</h2>
       <p class="lede">Settings only has one key to manage: <strong>Anthropic</strong>, which powers all four dimension scores (Linguistic Range, Grammatical Accuracy, Fluency, Phonological Control).</p>
 
       <ol class="steps">
@@ -168,7 +180,10 @@
         <li><strong>Fill in candidate details and paste or upload the transcript.</strong>
           <p>Name, role, department, and assessor name, plus the transcript text itself.</p>
         </li>
-        <li><strong>Click Assess.</strong>
+        <li><strong>Decide how to handle Tagalog/Filipino code-switching.</strong>
+          <p>There's a checkbox under Linguistic Range, right above Run Assessment. Left unticked (the default), any switch into Tagalog or Filipino to express an idea is flagged as evidence against Linguistic Range. Tick it to ignore code-switching for this candidate. Proper nouns (place names, institutions, movies, hobbies) are never flagged either way.</p>
+        </li>
+        <li><strong>Click Run Assessment.</strong>
           <p>The AI returns Linguistic Range and Grammar scores with evidence quoted from the transcript.</p>
         </li>
         <li><strong>Add your own scores for all four dimensions.</strong>
@@ -206,6 +221,9 @@
         <li><strong>Check that speaker tagging is right.</strong>
           <p>Candidate vs. Interviewer is detected automatically from the Meet participant names. If it's backward, click <span class="btn-ref">🔄 Swap</span> — this corrects the entire transcript and every score computed so far, not just what's said from that point on.</p>
         </li>
+        <li><strong>Flag Tagalog/Filipino code-switching if it happens.</strong>
+          <p>There's a checkbox next to the Linguistic Range score in the live scorecard. Left unticked (the default), any switch into Tagalog or Filipino to express an idea counts against Linguistic Range. Tick it to ignore code-switching for this candidate. You can toggle it at any point during the interview, and it applies retroactively the next time LR is scored.</p>
+        </li>
         <li><strong>Click Stop &amp; Score when the interview ends.</strong>
           <p>The bot leaves the call and final scores are generated for all four dimensions.</p>
           <p class="detail">Needs at least 30 words of candidate speech captured — if the interview was too short, you'll be told to run a longer one instead of getting a score.</p>
@@ -230,12 +248,17 @@
 
     <section id="batch">
       <h2><span class="eyebrow">Tracking multiple candidates</span>Batch Tracker</h2>
-      <p>Every candidate you add (from either mode) lands here in one table — AI and Interviewer score per dimension, qualifying level, and the suitability write-up.</p>
+      <p>Every candidate you add (from either mode) lands here in one table — AI and Interviewer score per dimension, qualifying level, and the suitability write-up. It's shared in real time, so anyone signed in sees the same list, including candidates added by other assessors.</p>
       <ol class="steps">
         <li><strong>Download Batch (.xlsx)</strong> for the full spreadsheet.
           <p>One summary sheet with everyone, plus a detail sheet per candidate with the full AI and Interviewer notes for all four dimensions.</p>
         </li>
       </ol>
+    </section>
+
+    <section id="reference">
+      <h2><span class="eyebrow">Look things up</span>Reference Guide</h2>
+      <p>The <span class="btn-ref">📘 Reference Guide</span> tab in the sidebar has two things worth knowing about, especially mid-interview: a breakdown of what separates each CEFR level (B1 through C2) across all four dimensions, and the four-phase interview question guide with sample questions for each phase.</p>
     </section>
 
     <section id="limits">
@@ -261,7 +284,7 @@
 </div>
 
 <footer>
-  EYT Berlitz Assessor — internal operating guide. Reflects the tool as currently built; update this if the Live Interview flow changes.
+  EYT Assessment Platform — internal operating guide. Reflects the tool as currently built; update this if the Live Interview flow changes.
 </footer>
 
 </body>
