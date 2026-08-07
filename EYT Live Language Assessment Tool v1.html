@@ -3173,6 +3173,66 @@ Write 3-5 sentences covering: the confidence pattern if available, specific soun
 Return ONLY valid JSON: {"pc_observation":"your note here"}`;
 }
 
+// Phase-coverage / untested-range checks, ported from runAssessment()'s STEP 2/STEP 3.
+// Only meaningful once the interview is complete, so only injected on the final (isFinal) call --
+// mid-interview segments are partial and can't be judged for phase coverage yet.
+function buildPhaseCoverageBlock() {
+  return `IDENTIFY INTERVIEW PHASE COVERAGE:
+Use the EYT Interview Question Guide below to identify which questions were asked and which phases were reached. Match the interviewer's questions against this list. Exact wording may vary -- match by intent and topic.
+
+EYT INTERVIEW QUESTION GUIDE (Assessment Guide -- for all candidate roles, not recruiter-specific)
+-------------------------------------------------------------------------------------------
+PHASE 1: Narrative & Baseline (Targeting B1)
+Focus: Consistency in high-frequency grammar and basic professional background.
+IQ1: "Walk me through what a normal day looks like for you at work." -- Fluency / GA (Present Tense)
+IQ2: "Tell me about something you finished at work recently. What part did you play in it?" -- GA (Past Tense)
+IQ3: "What abilities do you think someone needs to do well in your line of work?" -- LR (Professional vocabulary)
+IQ4: "What do you like to do outside of work?" -- Fluency (baseline tempo)
+IQ5: "Suppose someone just joined your team. What would you want them to know first?" -- LR / PC (social navigation)
+
+PHASE 2: Technical Detail & Process (Targeting B2)
+Focus: Handling non-routine professional subjects and multi-step explanations.
+IQ6: "How has your industry shifted over the past several years, from what you've seen?" -- GA (Present Perfect / complex structures)
+IQ7: "Take me through the steps your team follows when a customer has a complaint." -- Fluency / Cohesion (transitions)
+IQ8: "Why do you think some customers choose to do things online instead of in person?" -- LR (comparative/contrastive language)
+IQ9: "Tell me about a time you had to pick up a new tool or system fast. How did that go?" -- Fluency (tempo under pressure)
+IQ10: "What sets your company apart from others doing similar work?" -- LR (business-specific verbs)
+
+PHASE 3: Abstraction & Hypotheticals (Targeting C1/C2)
+Focus: Executive register, nuance, and finer shades of meaning.
+IQ11: "If you were suddenly in charge of the whole company, what's the first big thing you'd change, and why?" -- GA (Conditionals: If I were... I would)
+IQ12: "How much of a role do you think automated tools will end up playing in decisions people currently make?" -- LR (nuance and qualifiers)
+IQ13: "Do you think the saying 'the customer is always right' actually holds up? Make your case either way." -- Fluency / LR (spontaneous argumentation)
+IQ14: "How would you break down a complicated idea from your field to somebody with zero background in it?" -- LR (style and register adjustment)
+IQ15: "Do you think there's a real connection between how financially stable people feel and how much they trust each other? What's your take?" -- C2 (abstract concept formulation)
+
+PHASE 4: Stress Tests & Role-Plays (Targeting PC / composure)
+Focus: Composure, tone, and de-escalation skills.
+IQ16: "Pretend I'm a customer who's upset because I found a mistake on my bill. Put me at ease." -- PC (tone under stress)
+IQ17: "Say I proposed an approach you were pretty sure wouldn't work. How would you push back respectfully?" -- LR (diplomatic language)
+IQ18: "Walk me through the upsides and downsides of a fixed monthly cost versus one that can change over time." -- GA (comparative structures)
+IQ19: "If your resources were cut by a fifth overnight, what would you focus on first?" -- Fluency (pause control vs. filler words)
+IQ20: "Where do you want to be in your career a decade from now?" -- GA (future intentionality)
+
+NOTE: These questions are the EYT standard for all candidate roles. Interviewers may adapt wording for different industries -- match by intent. If the interviewer's question clearly targets the same skill and topic as a listed question, treat it as that question.
+
+UNTESTED RANGE FLAGS -- before finalising ratings, run these checks:
+
+LR RANGE CHECK: If 80% or more of the candidate's vocabulary belongs to a single domain, append to LR aiNotes:
+"[FLAG] RANGE UNTESTED -- Interview stayed within a single domain ([insert domain]). LR rating reflects demonstrated range only. Recommend a multi-topic prompt to confirm ceiling."
+
+GA STRUCTURE CHECK: If the interview only covered Phase 1 (past narrative only, no hypotheticals, no opinions, no future speculation), append to GA aiNotes:
+"[FLAG] STRUCTURE RANGE UNTESTED -- Interview did not include Phase 2-3 prompts. Candidate was not asked to use conditionals, future tense, or complex argument structures. GA ceiling is untested beyond past narrative. Recommend Phase 2-3 questions to confirm."
+
+PHASE COVERAGE NOTE: If you can determine which phases were covered, append to assessor_notes:
+"Phase coverage: [Phase X to Phase Y, questions approximately IQN-IQN]. [Any untested ceiling note]."
+If you cannot determine phases from the transcript, omit this note.
+
+IMPORTANT: Do NOT suppress the rating. Always assign a level first, then append any flags. Flags are informational only -- they do not change the score.
+
+`;
+}
+
 function buildLiveSysPrompt(isFinal, prevContext, ignoreTagalog) {
   return `You are a strict but fair EYT assessor scoring a JOB INTERVIEW. Your scores must be grounded in evidence from the transcript only. When in doubt between two levels, assign the LOWER level. Overscoring is more serious than underscoring. Score THREE dimensions: Linguistic Range (LR), Grammatical Accuracy (GA), and Fluency (FL).
 
@@ -3189,7 +3249,7 @@ NOTES FORMAT for LR and GA notes: briefly note ERRORS OBSERVED (exact quotes), E
 
 ${isFinal?'COMPLETE interview. Give final assessment.':'MID-INTERVIEW segment. Score conservatively.'}${prevContext}
 
-Return ONLY valid JSON: {"LR":{"aiLevel":"B1|B2|C1|C2","aiNotes":"evidence with quotes"},"GA":{"aiLevel":"B1|B2|C1|C2","aiNotes":"errors with quotes"},"FL":{"aiLevel":"B1|B2|C1|C2","aiNotes":"filler pattern, pacing evidence"},"partial_suitability":"one sentence","recommended_action":"one sentence","assessor_notes":"3-5 sentences"}`;
+${isFinal ? buildPhaseCoverageBlock() : ''}Return ONLY valid JSON: {"LR":{"aiLevel":"B1|B2|C1|C2","aiNotes":"evidence with quotes"},"GA":{"aiLevel":"B1|B2|C1|C2","aiNotes":"errors with quotes"},"FL":{"aiLevel":"B1|B2|C1|C2","aiNotes":"filler pattern, pacing evidence"},"partial_suitability":"one sentence","recommended_action":"one sentence","assessor_notes":"3-5 sentences"}`;
 }
 
 function liveGetKey() { return EMBEDDED_KEY||apiKey||document.getElementById('apiKeySettings').value.trim(); }
