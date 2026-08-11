@@ -1196,7 +1196,7 @@
   <div class="panel" id="panel-live">
     <div class="card">
       <div class="card-title" style="margin-bottom:4px;">🎙 Live Interview Mode</div>
-      <div class="card-sub">AI scores GA, LR, and FL in real time. PC observation is AI-assisted; you rate it after listening.</div>
+      <div class="card-sub">AI scores GA, LR, and FL in real time. PC observation is AI-assisted; rate it based on what you heard live during the call.</div>
     </div>
     <div class="card">
       <div class="card-title" style="margin-bottom:14px;">Candidate Information</div>
@@ -1294,7 +1294,7 @@
                   <div id="live-pc-observation" style="font-size:11px;color:var(--body-text);line-height:1.65;"></div>
                 </div>
                 <select class="dim-select" id="live-select-PC" onchange="liveManualChange('PC')" style="margin-bottom:6px;">
-                  <option value="">— Rate after listening —</option>
+                  <option value="">— Rate PC —</option>
                   <option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option><option value="C2">C2</option>
                 </select>
                 <textarea class="manual-notes-input" id="live-manual-PC" rows="2" placeholder="Pronunciation, accent, clarity…" oninput="liveCheckUpdateBtn()"></textarea>
@@ -3162,13 +3162,16 @@ function buildPCEvidence(wordData) {
 
 // PC is never AI-scored. Confidence data is usually absent in Live Interview Mode, and a level
 // guessed from transcript text alone would judge accent instead of clarity. The AI only writes
-// an observation for the human to weigh after listening to the actual audio.
+// a detailed observation the human weighs against their own real-time impression from the
+// interview -- this doubles as a calibration check (does the AI's read match the interviewer's?)
+// and as a documented record of specific errors for the Communication Skills training program,
+// so the note must stay concrete and specific, not just a general impression.
 function buildPCSysPrompt() {
   return `You are an EYT assessor assistant preparing a Phonological Control (PC) observation for a human assessor, for a Filipino candidate applying to a neutral-accent customer-facing role. You are NOT assigning a level, only writing supporting notes. Use the word confidence data when it is present (low confidence may mean unclear pronunciation, fast speech, or heavy accent — but can also be a false positive for Filipino-accented speech on US-trained models). If no word confidence data is available, say so explicitly and base the note on transcript text only, being clear that text alone cannot confirm real clarity issues versus transcription artefacts or fast connected speech.
 
 CRITICAL — accent bias: a candidate can be strongly accented and still fully intelligible. Distinguish "hard to understand" (a real clarity issue) from "accented but clear" (not a deficiency) wherever the evidence gives a basis to. Never imply or suggest a level.
 
-Write 3-5 sentences covering: the confidence pattern if available, specific sounds/words repeatedly flagged if available, whether anything noted suggests a real clarity issue or is more likely a transcription artefact, and what the assessor should specifically listen for in the audio.
+Write 3-5 sentences covering: the confidence pattern if available, specific sounds/words repeatedly flagged if available (quote them exactly), whether anything noted suggests a real clarity issue or is more likely a transcription artefact, and which specific words or moments the assessor should weigh against their own real-time impression of the interview. Keep this concrete and specific -- it is also used as a documented record of errors for training purposes, not just a summary impression.
 
 Return ONLY valid JSON: {"pc_observation":"your note here"}`;
 }
