@@ -51,7 +51,8 @@ app.post('/api/start-bot', async (req, res) => {
           transcript: {
             provider: {
               deepgram_streaming: {
-                language_code: 'en'
+                language_code: 'en',
+                filler_words: true
               }
             }
           },
