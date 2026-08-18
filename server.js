@@ -52,7 +52,7 @@ app.post('/api/start-bot', async (req, res) => {
             provider: {
               deepgram_streaming: {
                 language_code: 'en',
-                model: 'nova-3',
+                model: 'flux',
                 filler_words: true
               }
             }
