@@ -1646,7 +1646,7 @@ async function grantAccess() {
   if (!email || !email.includes('@')) { showToast('Enter a valid email address.'); return; }
   try {
     await db.collection('authorizedUsers').doc(email).set({
-      name: name || '', addedAt: firebase.firestore.FieldValue.serverTimestamp(), addedBy: fbAuth.currentUser.email
+      name: name || '', addedAt: firebase.firestore.FieldValue.serverTimestamp(), addedBy: (fbAuth.currentUser && fbAuth.currentUser.email) || ''
     });
     emailInput.value = ''; nameInput.value = '';
     showToast('Access granted ✓');
@@ -1675,44 +1675,20 @@ async function isOnAllowlist(email) {
   }
 }
 
+// Google Sign-In gate disabled: the tool now sits behind the whole site's own login
+// on its new server, so this in-app gate was redundant. Always reveal the tool
+// immediately, regardless of Firebase auth state. NOTE: Firestore's security rules
+// still require request.auth != null for batchEntries/authorizedUsers -- those need
+// updating too, or Batch Tracker reads/writes will fail with permission-denied.
 fbAuth.onAuthStateChanged(async user => {
   const gate = document.getElementById('auth-gate');
   const shell = document.querySelector('.app-shell');
-  const inDomain = user && user.email && user.email.toLowerCase().endsWith('@' + ALLOWED_DOMAIN);
-
-  if (user && !inDomain) {
-    fbAuth.signOut();
-    showAuthError('Only ' + ALLOWED_DOMAIN + ' accounts are allowed.');
-    return;
-  }
-
-  if (!user) {
-    gate.classList.remove('hidden');
-    shell.classList.remove('signed-in');
-    return;
-  }
-
-  const email = user.email.toLowerCase();
-  const admin = isAdmin(email);
-  const allowed = admin || await isOnAllowlist(email);
-
-  if (!allowed) {
-    fbAuth.signOut();
-    showAuthError('Your account (' + email + ') has not been granted access yet. Contact ' + ADMIN_EMAILS[0] + ' to request access.');
-    return;
-  }
-
   gate.classList.add('hidden');
   shell.classList.add('signed-in');
-  const nameEl = document.querySelector('.user-name');
-  const avatarEl = document.querySelector('.user-avatar');
-  const roleEl = document.querySelector('.user-role');
-  if (nameEl) nameEl.textContent = user.displayName || user.email;
-  if (avatarEl) avatarEl.textContent = (user.displayName || user.email || '?').charAt(0).toUpperCase();
-  if (roleEl) { roleEl.textContent = 'Sign out'; roleEl.style.cursor = 'pointer'; roleEl.onclick = signOutUser; }
 
-  document.getElementById('manage-access-card').style.display = admin ? 'block' : 'none';
-  if (admin) startAccessListSync();
+  // No signed-in user anymore, so there's no admin/allowlist concept -- hide Manage Access.
+  const manageAccessCard = document.getElementById('manage-access-card');
+  if (manageAccessCard) manageAccessCard.style.display = 'none';
   startBatchSync();
 });
 
@@ -2708,7 +2684,7 @@ async function addToBatch() {
   const exists = batchData.find(b => b.candidateName === currentResult.candidateName && b.date === currentResult.date);
   if (exists) { showToast('Already in Batch Tracker.'); return; }
   try {
-    await db.collection('batchEntries').add({ ...currentResult, addedAt: firebase.firestore.FieldValue.serverTimestamp(), addedBy: fbAuth.currentUser.email });
+    await db.collection('batchEntries').add({ ...currentResult, addedAt: firebase.firestore.FieldValue.serverTimestamp(), addedBy: (fbAuth.currentUser && fbAuth.currentUser.email) || '' });
     showToast('Added to Batch Tracker ✓');
   } catch (e) { showToast('Failed to add: ' + e.message); }
 }
@@ -3354,7 +3330,7 @@ async function liveAddToBatch() {
   const exists=batchData.find(b=>b.candidateName===liveResult.candidateName&&b.date===liveResult.date);
   if(exists){showToast('Already in Batch Tracker.');return;}
   try {
-    await db.collection('batchEntries').add({ ...liveResult, addedAt: firebase.firestore.FieldValue.serverTimestamp(), addedBy: fbAuth.currentUser.email });
+    await db.collection('batchEntries').add({ ...liveResult, addedAt: firebase.firestore.FieldValue.serverTimestamp(), addedBy: (fbAuth.currentUser && fbAuth.currentUser.email) || '' });
     showToast('Added to Batch Tracker \u2713');
   } catch(e) { showToast('Failed to add: ' + e.message); }
 }
